@@ -8,6 +8,7 @@
         Background="{Binding MainPanelColor}"
         Width="650" Height="430"
         MinWidth="650" MinHeight="430"
+        WindowStartupLocation="CenterScreen"
         Icon="/Assets/avalonia-logo.ico"
         Title="HardSubberGUI">
 
@@ -18,7 +19,7 @@
     <DockPanel Margin="5">
         <!--Bottom Panel-->
         <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
-            <Button HorizontalAlignment="Left" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick"/>
+            <Button Name="ExitControl" HorizontalAlignment="Left" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick"/>
         
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
                 <Button Name="CancelControl" IsEnabled="False" Width="125" HorizontalContentAlignment="Center" Content="{Binding Cancel}" Click="Cancel_OnClick"/>
@@ -33,15 +34,15 @@
                 <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
                     <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Input}"/>
                     <TextBox Name="InputControl" Margin="100, 0, 195, 0"/>
-                    <Button HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick"/>
-                    <Button HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="75" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick"/>
+                    <Button Name="InputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick"/>
+                    <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="75" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick"/>
                 </Panel>
                 
                 <!--Output File Picker Panel-->
                 <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 25">
                     <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
                     <TextBox Name="OutputControl" Margin="100, 0, 115, 0"/>
-                    <Button HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick"/>
+                    <Button Name="OutputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick"/>
                 </Panel>
 
                 <!--Hardsub Options Panel-->
@@ -54,7 +55,7 @@
                         <NumericUpDown Name="AudioIndexControl" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding Quality}"/>
-                        <NumericUpDown Name="QualityControl" Minimum="0" Value="22" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="QualityControl" Minimum="0" Maximum="51" Value="22" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding ResolutionOverride}"/>
                         <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">

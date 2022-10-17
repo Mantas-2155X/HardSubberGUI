@@ -18,6 +18,13 @@ namespace HardSubberGUI.Views
 		{
 			InitializeComponent();
 
+			Closed += delegate
+			{
+				var cancel = this.FindControl<Button>("CancelControl");
+				if (cancel != null && cancel.IsEnabled)
+					Cancel_OnClick(null, null);
+			};
+			
 			var args = Environment.GetCommandLineArgs();
 			if (args.Length < 2)
 				return;
@@ -88,6 +95,8 @@ namespace HardSubberGUI.Views
 			cancel.IsEnabled = true;
 			convert.IsEnabled = false;
 
+			Tools.ToggleControls(this, false);
+			
 			CancellationSource.Dispose();
 			CancellationSource = new CancellationTokenSource();
 			
@@ -105,6 +114,8 @@ namespace HardSubberGUI.Views
 				{
 					cancel.IsEnabled = false;
 					convert.IsEnabled = true;
+					
+					Tools.ToggleControls(this, true);
 				});
 			});
 		}

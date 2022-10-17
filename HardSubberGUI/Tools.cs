@@ -131,6 +131,7 @@ namespace HardSubberGUI
 				else
 				{
 					process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex} ";
+					process.StartInfo.Arguments += "-c:v libx264 ";
 				}
 				
 				process.StartInfo.Arguments += $"-map 0:a:{audioIndex} ";
@@ -169,6 +170,28 @@ namespace HardSubberGUI
 			MainWindow.Processes.Add(process);
 			process.WaitForExit();
 			MainWindow.Processes.Remove(process);
+		}
+
+		public static void ToggleControls(MainWindow window, bool value)
+		{
+			window.ColorspaceControl.IsEnabled = value;
+			window.InputControl.IsEnabled = value;
+			window.OutputControl.IsEnabled = value;
+			window.QualityControl.IsEnabled = value;
+			window.SimultaneousControl.IsEnabled = value;
+			window.ApplySubsControl.IsEnabled = value;
+			window.AudioIndexControl.IsEnabled = value;
+			window.FastStartControl.IsEnabled = value;
+			window.HardwareAccelerationControl.IsEnabled = value;
+			window.MetadataTitleControl.IsEnabled = value;
+			window.SubtitleIndexControl.IsEnabled = value;
+			window.AACControl.IsEnabled = value;
+			window.ResolutionOverrideHeightControl.IsEnabled = value;
+			window.ResolutionOverrideWidthControl.IsEnabled = value;
+			window.ExitControl.IsEnabled = value;
+			window.InputDirectoryControl.IsEnabled = value;
+			window.InputFileControl.IsEnabled = value;
+			window.OutputDirectoryControl.IsEnabled = value;
 		}
 	}
 }
