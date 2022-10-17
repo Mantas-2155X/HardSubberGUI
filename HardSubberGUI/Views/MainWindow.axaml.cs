@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -14,10 +15,12 @@ namespace HardSubberGUI.Views
 		public static readonly List<Process> Processes = new ();
 		public static CancellationTokenSource CancellationSource = new ();
 
+		public static bool IsWindows;
+
 		public MainWindow()
 		{
 			InitializeComponent();
-
+			
 			Closed += delegate
 			{
 				var cancel = this.FindControl<Button>("CancelControl");
@@ -25,6 +28,8 @@ namespace HardSubberGUI.Views
 					Cancel_OnClick(null, null);
 			};
 			
+			IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
 			var args = Environment.GetCommandLineArgs();
 			if (args.Length < 2)
 				return;
@@ -58,10 +63,12 @@ namespace HardSubberGUI.Views
 		private void Cancel_OnClick(object? sender, RoutedEventArgs e)
 		{
 			CancellationSource.Cancel();
-			
-			foreach (var process in Processes)
+
+			for (var index = Processes.Count - 1; index >= 0; index--)
 			{
-				process.Kill();
+				var process = Processes[index];
+				if (process != null && !process.HasExited)
+					process.Kill(IsWindows);
 			}
 		}
 		
@@ -91,6 +98,9 @@ namespace HardSubberGUI.Views
 			var convert = this.FindControl<Button>("ConvertControl");
 			
 			var workers = simultaneousValue ? Environment.ProcessorCount / 4 : 1;
+			
+			if (workers < 1)
+				workers = 1;
 
 			cancel.IsEnabled = true;
 			convert.IsEnabled = false;
@@ -102,12 +112,20 @@ namespace HardSubberGUI.Views
 			
 			await Task.Run(() =>
 			{
-				Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = CancellationSource.Token}, s =>
+				try
 				{
-					Tools.ActFile(s, outputValue, applySubsValue, subtitleIndexValue, audioIndexValue, qualityValue,
-						resolutionOverrideWidthValue, resolutionOverrideHeightValue, hardwareAccelerationValue,
-						colorspaceValue, metadataTitleValue, fastStartValue, aacValue);
-				});
+					Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = CancellationSource.Token }, s =>
+					{
+						Tools.ActFile(s, outputValue, applySubsValue, subtitleIndexValue, audioIndexValue,
+							qualityValue,
+							resolutionOverrideWidthValue, resolutionOverrideHeightValue, hardwareAccelerationValue,
+							colorspaceValue, metadataTitleValue, fastStartValue, aacValue);
+					});
+				}
+				catch (TaskCanceledException ex)
+				{
+					Console.WriteLine(ex);
+				}
 			}).ContinueWith((t) =>
 			{
 				Dispatcher.UIThread.Post(() =>

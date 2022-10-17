@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -14,17 +13,15 @@ namespace HardSubberGUI
 	{
 		public static readonly List<string> SupportedVideoFormats = new () { ".avi", ".mkv", ".m4v", ".mp4" };
 
-		public static readonly string[] Escape = { " ", "[", "]", ",", ":", "'", ";", "(", ")" };
+		public static readonly string[] Escape = { " ", "[", "]", ",", ":", ";", "(", ")" };
 
 		public static async Task<string> PickVideoFile(Window window)
 		{
-			var filters = SupportedVideoFormats.Select(supportedVideoFormat => new FilePickerFileType(supportedVideoFormat)).ToList();
-			
-			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a video file", FileTypeFilter = filters});
+			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a video file"});
 			if (result == null || result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(7) : "";
+			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!MainWindow.IsWindows ? 7 : 8) : "";
 		}
 
 		public static async Task<string> PickDirectory(Window window)
@@ -33,7 +30,7 @@ namespace HardSubberGUI
 			if (result == null || result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(7) : "";
+			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!MainWindow.IsWindows ? 7 : 8) : "";
 		}
 
 		public static string GetffmpegPath()
@@ -49,7 +46,7 @@ namespace HardSubberGUI
 				}
 			};
 			
-			process.StartInfo.FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "where" : "which";
+			process.StartInfo.FileName = !MainWindow.IsWindows ? "which" : "where.exe";
 			process.Start();
 
 			var path = "";
@@ -80,9 +77,14 @@ namespace HardSubberGUI
 			var files = new List<string>();
 
 			if (inputInfo.Attributes.HasFlag(FileAttributes.Directory))
+			{
 				files.AddRange(from file in Directory.GetFiles(inputValue.Text) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
+			}
 			else
-				files.Add(inputValue.Text);
+			{
+				if (SupportedVideoFormats.Contains(inputInfo.Extension))
+					files.Add(inputValue.Text);
+			}
 
 			return files.Count == 0 ? null : files.OrderBy(f => f).ToList();
 		}
@@ -103,8 +105,6 @@ namespace HardSubberGUI
 			{
 				StartInfo = new ProcessStartInfo
 				{
-					FileName = GetffmpegPath(),
-					Arguments = "",
 					UseShellExecute = true,
 					CreateNoWindow = false,
 					WindowStyle = ProcessWindowStyle.Normal
@@ -121,7 +121,27 @@ namespace HardSubberGUI
 			if (processVideo)
 			{
 				var scaleString = (resw > 0 && resh > 0) ? $"scale={resw}:{resh}," : "";
-				var escaped = Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str));
+				var escaped = info.FullName;
+				
+				if (!MainWindow.IsWindows)
+				{
+					escaped = Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str));
+				}
+				else
+				{
+					escaped = info.FullName.Replace("\\", "/");
+					
+					escaped = escaped.Replace("[", "\\[");
+					escaped = escaped.Replace("]", "\\]");
+					
+					escaped = escaped.Replace("(", "\\`(");
+					escaped = escaped.Replace(")", "\\`)");
+					escaped = escaped.Replace(" ", "\\` ");
+					escaped = escaped.Replace(",", "\\`,");
+					escaped = escaped.Replace(";", "\\`;");
+					
+					escaped = escaped.Replace(":", "\\\\`:");
+				}
 
 				if (hwaccel)
 				{
@@ -157,12 +177,20 @@ namespace HardSubberGUI
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}.mp4'";
 
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			if (!MainWindow.IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
 				args = $"-e \"{GetffmpegPath()} {args}\"";
 				
-				process.StartInfo.FileName = "/usr/bin/xterm";
+				process.StartInfo.FileName = "xterm";
+				process.StartInfo.Arguments = args;
+			}
+			else
+			{
+				var args = process.StartInfo.Arguments;
+				args = $"\"{GetffmpegPath()} {args}\"";
+				
+				process.StartInfo.FileName = "powershell.exe";
 				process.StartInfo.Arguments = args;
 			}
 
