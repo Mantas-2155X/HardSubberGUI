@@ -49,13 +49,13 @@
                 <Panel DockPanel.Dock="Left" Width="250">
                     <StackPanel>
                         <Label Content="{Binding SubtitleIndex}"/>
-                        <NumericUpDown Name="SubtitleIndexControl" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="SubtitleIndexControl" FormatString="N0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding AudioIndex}"/>
-                        <NumericUpDown Name="AudioIndexControl" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="AudioIndexControl" FormatString="N0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding Quality}"/>
-                        <NumericUpDown Name="QualityControl" Minimum="0" Maximum="51" Value="22" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="QualityControl" FormatString="N0" Minimum="0" Maximum="51" Value="22" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding ResolutionOverride}"/>
                         <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
@@ -69,7 +69,7 @@
                 <Panel DockPanel.Dock="Right" Margin="30, 5, 0, 0">
                     <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto">
                         <ToggleSwitch Name="ColorspaceControl" Margin="0, 0, 20, 15" IsChecked="True" Content="{Binding Colorspace}" Grid.Row="0" Grid.Column="0"/>
-                        <ToggleSwitch Name="HardwareAccelerationControl" Margin="0, 0, 20, 15" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
+                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Margin="0, 0, 20, 15" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
                         <ToggleSwitch Name="SimultaneousControl" Margin="0, 0, 20, 15" Content="{Binding Simultaneous}" Grid.Row="2" Grid.Column="0"/>
                         
                         <ToggleSwitch Name="MetadataTitleControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding MetadataTitle}" Grid.Row="0" Grid.Column="1"/>
