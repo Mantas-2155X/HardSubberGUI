@@ -17,4 +17,3 @@ This is a simple GUI tool made with Avalonia used to burn subtitles into a video
 
 ### Notes
 * Hardware acceleration only implemented for amdgpu on linux
-* Not tested on windows but probably works
