@@ -3,8 +3,11 @@
         xmlns:vm="using:HardSubberGUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="430"
         x:Class="HardSubberGUI.Views.MainWindow"
+        Background="{Binding MainPanelColor}"
+        Width="650" Height="430"
+        MinWidth="650" MinHeight="430"
         Icon="/Assets/avalonia-logo.ico"
         Title="HardSubberGUI">
 
@@ -12,6 +15,69 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <DockPanel Margin="5">
+        <!--Bottom Panel-->
+        <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
+            <Button HorizontalAlignment="Left" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick"/>
+        
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
+                <Button Name="CancelControl" IsEnabled="False" Width="125" HorizontalContentAlignment="Center" Content="{Binding Cancel}" Click="Cancel_OnClick"/>
+                <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding ConvertVideos}" Click="Convert_OnClick"/>
+            </StackPanel>
+        </Panel>
+        
+        <!--Content Panel-->
+        <Panel>
+            <DockPanel>
+                <!--Input File Picker Panel-->
+                <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
+                    <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Input}"/>
+                    <TextBox Name="InputControl" Margin="100, 0, 195, 0"/>
+                    <Button HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick"/>
+                    <Button HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="75" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick"/>
+                </Panel>
+                
+                <!--Output File Picker Panel-->
+                <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 25">
+                    <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
+                    <TextBox Name="OutputControl" Margin="100, 0, 115, 0"/>
+                    <Button HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick"/>
+                </Panel>
 
+                <!--Hardsub Options Panel-->
+                <Panel DockPanel.Dock="Left" Width="250">
+                    <StackPanel>
+                        <Label Content="{Binding SubtitleIndex}"/>
+                        <NumericUpDown Name="SubtitleIndexControl" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        
+                        <Label Content="{Binding AudioIndex}"/>
+                        <NumericUpDown Name="AudioIndexControl" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        
+                        <Label Content="{Binding Quality}"/>
+                        <NumericUpDown Name="QualityControl" Minimum="0" Value="22" Margin="0, 0, 0, 10"/>
+                        
+                        <Label Content="{Binding ResolutionOverride}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
+                            <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
+                            <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Panel>
+                
+                <!--Other Options Panel-->
+                <Panel DockPanel.Dock="Right" Margin="30, 5, 0, 0">
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto">
+                        <ToggleSwitch Name="ColorspaceControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding Colorspace}" Grid.Row="0" Grid.Column="0"/>
+                        <ToggleSwitch Name="HardwareAccelerationControl" Margin="0, 0, 30, 0" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
+                        <ToggleSwitch Name="SimultaneousControl" Margin="0, 15, 0, 0" Content="{Binding Simultaneous}" Grid.Row="2" Grid.Column="0"/>
+                        
+                        <ToggleSwitch Name="MetadataTitleControl" Margin="0, 0, 30, 0" IsChecked="True" Content="{Binding MetadataTitle}" Grid.Row="0" Grid.Column="1"/>
+                        <ToggleSwitch Name="FastStartControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding FastStart}" Grid.Row="1" Grid.Column="1"/>
+                        <ToggleSwitch Name="ApplySubsControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding Subs}" Grid.Row="2" Grid.Column="1"/>
+                        <ToggleSwitch Name="AACControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding AAC}" Grid.Row="3" Grid.Column="1"/>
+                    </Grid>
+                </Panel>
+            </DockPanel>
+        </Panel>
+    </DockPanel>
 </Window>
