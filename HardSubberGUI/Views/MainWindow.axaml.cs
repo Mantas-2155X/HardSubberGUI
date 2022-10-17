@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -12,10 +9,7 @@ namespace HardSubberGUI.Views
 {
 	public partial class MainWindow : Window
 	{
-		public static readonly List<Process> Processes = new ();
 		public static CancellationTokenSource CancellationSource = new ();
-
-		public static bool IsWindows;
 
 		public MainWindow()
 		{
@@ -28,8 +22,8 @@ namespace HardSubberGUI.Views
 					Cancel_OnClick(null, null);
 			};
 			
-			IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
+			Tools.ToggleControls(this, true);
+			
 			var args = Environment.GetCommandLineArgs();
 			if (args.Length < 2)
 				return;
@@ -40,7 +34,7 @@ namespace HardSubberGUI.Views
 		private async void InputFile_OnClick(object? sender, RoutedEventArgs e)
 		{
 			var label = this.FindControl<TextBox>("InputControl");
-			label.Text = await Tools.PickVideoFile(this);
+			label.Text = await Tools.PickFile(this);
 		}
 		
 		private async void InputDirectory_OnClick(object? sender, RoutedEventArgs e)
@@ -64,11 +58,11 @@ namespace HardSubberGUI.Views
 		{
 			CancellationSource.Cancel();
 
-			for (var index = Processes.Count - 1; index >= 0; index--)
+			for (var index = Tools.Processes.Count - 1; index >= 0; index--)
 			{
-				var process = Processes[index];
+				var process = Tools.Processes[index];
 				if (process != null && !process.HasExited)
-					process.Kill(IsWindows);
+					process.Kill(Tools.IsWindows);
 			}
 		}
 		

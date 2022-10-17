@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -11,17 +12,20 @@ namespace HardSubberGUI
 {
 	public static class Tools
 	{
-		public static readonly List<string> SupportedVideoFormats = new () { ".avi", ".mkv", ".m4v", ".mp4" };
-
 		public static readonly string[] Escape = { " ", "[", "]", ",", ":", ";", "(", ")" };
 
-		public static async Task<string> PickVideoFile(Window window)
+		public static readonly List<string> SupportedVideoFormats = new () { ".avi", ".mkv", ".m4v", ".mp4" };
+		public static readonly List<Process> Processes = new ();
+
+		public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		
+		public static async Task<string> PickFile(Window window)
 		{
-			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a video file"});
+			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a file"});
 			if (result == null || result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!MainWindow.IsWindows ? 7 : 8) : "";
+			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
 		}
 
 		public static async Task<string> PickDirectory(Window window)
@@ -30,7 +34,7 @@ namespace HardSubberGUI
 			if (result == null || result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!MainWindow.IsWindows ? 7 : 8) : "";
+			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
 		}
 
 		public static string GetffmpegPath()
@@ -46,7 +50,7 @@ namespace HardSubberGUI
 				}
 			};
 			
-			process.StartInfo.FileName = !MainWindow.IsWindows ? "which" : "where.exe";
+			process.StartInfo.FileName = !IsWindows ? "which" : "where.exe";
 			process.Start();
 
 			var path = "";
@@ -58,6 +62,62 @@ namespace HardSubberGUI
 			return path ?? "";
 		}
 
+		public static string Getlspci()
+		{
+			var process = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					Arguments = "-c \"lspci | grep VGA\"",
+					UseShellExecute = false, 
+					RedirectStandardOutput = true,
+					CreateNoWindow = true
+				}
+			};
+			
+			process.StartInfo.FileName = "/bin/sh";
+			process.Start();
+
+			var str = "";
+			while (!process.StandardOutput.EndOfStream)
+			{
+				str = process.StandardOutput.ReadLine();
+			}
+
+			return str ?? "";
+		}
+		
+		public static bool IsHardwareAccelerationSupported()
+		{
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
+				return false;
+			
+			var lspci = Getlspci();
+			return lspci.Contains("AMD");
+		}
+
+		public static void ToggleControls(MainWindow window, bool value)
+		{
+			window.ColorspaceControl.IsEnabled = value;
+			window.InputControl.IsEnabled = value;
+			window.OutputControl.IsEnabled = value;
+			window.QualityControl.IsEnabled = value;
+			window.SimultaneousControl.IsEnabled = value;
+			window.ApplySubsControl.IsEnabled = value;
+			window.AudioIndexControl.IsEnabled = value;
+			window.FastStartControl.IsEnabled = value;
+			window.HardwareAccelerationControl.IsEnabled = IsHardwareAccelerationSupported() && value;
+			window.MetadataTitleControl.IsEnabled = value;
+			window.SubtitleIndexControl.IsEnabled = value;
+			window.AACControl.IsEnabled = value;
+			window.ResolutionOverrideHeightControl.IsEnabled = value;
+			window.ResolutionOverrideWidthControl.IsEnabled = value;
+			window.ExitControl.IsEnabled = value;
+			window.InputDirectoryControl.IsEnabled = value;
+			window.InputFileControl.IsEnabled = value;
+			window.OutputDirectoryControl.IsEnabled = value;
+		}
+		
 		public static List<string> ProcessFiles(Window window)
 		{
 			var inputValue = window.FindControl<TextBox>("InputControl");
@@ -123,7 +183,7 @@ namespace HardSubberGUI
 				var scaleString = (resw > 0 && resh > 0) ? $"scale={resw}:{resh}," : "";
 				var escaped = info.FullName;
 				
-				if (!MainWindow.IsWindows)
+				if (!IsWindows)
 				{
 					escaped = Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str));
 				}
@@ -177,7 +237,7 @@ namespace HardSubberGUI
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}.mp4'";
 
-			if (!MainWindow.IsWindows)
+			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
 				args = $"-e \"{GetffmpegPath()} {args}\"";
@@ -195,31 +255,9 @@ namespace HardSubberGUI
 			}
 
 			process.Start();
-			MainWindow.Processes.Add(process);
+			Processes.Add(process);
 			process.WaitForExit();
-			MainWindow.Processes.Remove(process);
-		}
-
-		public static void ToggleControls(MainWindow window, bool value)
-		{
-			window.ColorspaceControl.IsEnabled = value;
-			window.InputControl.IsEnabled = value;
-			window.OutputControl.IsEnabled = value;
-			window.QualityControl.IsEnabled = value;
-			window.SimultaneousControl.IsEnabled = value;
-			window.ApplySubsControl.IsEnabled = value;
-			window.AudioIndexControl.IsEnabled = value;
-			window.FastStartControl.IsEnabled = value;
-			window.HardwareAccelerationControl.IsEnabled = value;
-			window.MetadataTitleControl.IsEnabled = value;
-			window.SubtitleIndexControl.IsEnabled = value;
-			window.AACControl.IsEnabled = value;
-			window.ResolutionOverrideHeightControl.IsEnabled = value;
-			window.ResolutionOverrideWidthControl.IsEnabled = value;
-			window.ExitControl.IsEnabled = value;
-			window.InputDirectoryControl.IsEnabled = value;
-			window.InputFileControl.IsEnabled = value;
-			window.OutputDirectoryControl.IsEnabled = value;
+			Processes.Remove(process);
 		}
 	}
 }
