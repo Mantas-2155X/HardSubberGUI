@@ -67,15 +67,15 @@
                 
                 <!--Other Options Panel-->
                 <Panel DockPanel.Dock="Right" Margin="30, 5, 0, 0">
-                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto">
-                        <ToggleSwitch Name="ColorspaceControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding Colorspace}" Grid.Row="0" Grid.Column="0"/>
-                        <ToggleSwitch Name="HardwareAccelerationControl" Margin="0, 0, 30, 0" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
-                        <ToggleSwitch Name="SimultaneousControl" Margin="0, 15, 0, 0" Content="{Binding Simultaneous}" Grid.Row="2" Grid.Column="0"/>
+                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto">
+                        <ToggleSwitch Name="ColorspaceControl" Margin="0, 0, 20, 15" IsChecked="True" Content="{Binding Colorspace}" Grid.Row="0" Grid.Column="0"/>
+                        <ToggleSwitch Name="HardwareAccelerationControl" Margin="0, 0, 20, 15" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
+                        <ToggleSwitch Name="SimultaneousControl" Margin="0, 0, 20, 15" Content="{Binding Simultaneous}" Grid.Row="2" Grid.Column="0"/>
                         
-                        <ToggleSwitch Name="MetadataTitleControl" Margin="0, 0, 30, 0" IsChecked="True" Content="{Binding MetadataTitle}" Grid.Row="0" Grid.Column="1"/>
-                        <ToggleSwitch Name="FastStartControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding FastStart}" Grid.Row="1" Grid.Column="1"/>
-                        <ToggleSwitch Name="ApplySubsControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding Subs}" Grid.Row="2" Grid.Column="1"/>
-                        <ToggleSwitch Name="AACControl" Margin="0, 15, 0, 0" IsChecked="True" Content="{Binding AAC}" Grid.Row="3" Grid.Column="1"/>
+                        <ToggleSwitch Name="MetadataTitleControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding MetadataTitle}" Grid.Row="0" Grid.Column="1"/>
+                        <ToggleSwitch Name="FastStartControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding FastStart}" Grid.Row="1" Grid.Column="1"/>
+                        <ToggleSwitch Name="ApplySubsControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding Subs}" Grid.Row="2" Grid.Column="1"/>
+                        <ToggleSwitch Name="AACControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding AAC}" Grid.Row="3" Grid.Column="1"/>
                     </Grid>
                 </Panel>
             </DockPanel>
