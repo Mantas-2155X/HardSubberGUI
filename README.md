@@ -1,6 +1,6 @@
 # HardSubberGUI
 
-This is a simple GUI tool used to burn subtitles into a video with support for a few extra features like resizing, converting audio, setting metadata etc.
+This is a simple GUI tool made with Avalonia used to burn subtitles into a video with support for a few extra features like resizing, converting audio, setting metadata etc.
 
 ### Usage
 * Start the executable (available optional input path parameter)
