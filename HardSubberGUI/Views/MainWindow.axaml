@@ -9,7 +9,7 @@
         Width="650" Height="430"
         MinWidth="650" MinHeight="430"
         WindowStartupLocation="CenterScreen"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/hardsubber.ico"
         Title="HardSubberGUI">
 
     <Design.DataContext>
