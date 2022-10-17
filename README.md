@@ -2,6 +2,8 @@
 
 This is a simple GUI tool made with Avalonia used to burn subtitles into a video with support for a few extra features like resizing, converting audio, setting metadata etc.
 
+![image](img.png)
+
 ### Usage
 * Start the executable (available optional input path parameter)
 
