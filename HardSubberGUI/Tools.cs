@@ -22,7 +22,7 @@ namespace HardSubberGUI
 		public static async Task<string> PickFile(Window window)
 		{
 			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a file"});
-			if (result == null || result.Count == 0)
+			if (result.Count == 0)
 				return "";
 
 			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
@@ -31,7 +31,7 @@ namespace HardSubberGUI
 		public static async Task<string> PickDirectory(Window window)
 		{
 			var result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {AllowMultiple = false, Title = "Select a directory"});
-			if (result == null || result.Count == 0)
+			if (result.Count == 0)
 				return "";
 
 			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
@@ -119,32 +119,29 @@ namespace HardSubberGUI
 			window.ExitAfterwardsControl.IsEnabled = value;
 		}
 		
-		public static List<string> ProcessFiles(Window window)
+		public static List<string>? ProcessFiles(MainWindow window)
 		{
-			var inputValue = window.FindControl<TextBox>("InputControl");
-			var outputValue = window.FindControl<TextBox>("OutputControl");
-
-			if (string.IsNullOrEmpty(inputValue.Text))
+			if (string.IsNullOrEmpty(window.InputControl.Text))
 				return null;
 
-			var inputInfo = new FileInfo(inputValue.Text);
+			var inputInfo = new FileInfo(window.InputControl.Text);
 			
-			if (string.IsNullOrEmpty(outputValue.Text))
-				outputValue.Text = Path.Combine(inputInfo.Attributes.HasFlag(FileAttributes.Directory) ? inputValue.Text : inputInfo.FullName[..^inputInfo.Name.Length], "output");
+			if (string.IsNullOrEmpty(window.OutputControl.Text))
+				window.OutputControl.Text = Path.Combine(inputInfo.Attributes.HasFlag(FileAttributes.Directory) ? window.InputControl.Text : inputInfo.FullName[..^inputInfo.Name.Length], "output");
 
-			if (!Directory.Exists(outputValue.Text))
-				Directory.CreateDirectory(outputValue.Text);
+			if (!Directory.Exists(window.OutputControl.Text))
+				Directory.CreateDirectory(window.OutputControl.Text);
 
 			var files = new List<string>();
 
 			if (inputInfo.Attributes.HasFlag(FileAttributes.Directory))
 			{
-				files.AddRange(from file in Directory.GetFiles(inputValue.Text) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
+				files.AddRange(from file in Directory.GetFiles(window.InputControl.Text) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
 			}
 			else
 			{
 				if (SupportedVideoFormats.Contains(inputInfo.Extension))
-					files.Add(inputValue.Text);
+					files.Add(window.InputControl.Text);
 			}
 
 			return files.Count == 0 ? null : files.OrderBy(f => f).ToList();

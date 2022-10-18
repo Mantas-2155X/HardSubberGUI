@@ -17,8 +17,7 @@ namespace HardSubberGUI.Views
 			
 			Closed += delegate
 			{
-				var cancel = this.FindControl<Button>("CancelControl");
-				if (cancel != null && cancel.IsEnabled)
+				if (CancelControl.IsEnabled)
 					Cancel_OnClick(null, null);
 			};
 			
@@ -28,33 +27,30 @@ namespace HardSubberGUI.Views
 			if (args.Length < 2)
 				return;
 			
-			this.FindControl<TextBox>("InputControl").Text = args[1];
+			InputControl.Text = args[1];
 		}
 
 		private async void InputFile_OnClick(object? sender, RoutedEventArgs e)
 		{
-			var label = this.FindControl<TextBox>("InputControl");
-			label.Text = await Tools.PickFile(this);
+			InputControl.Text = await Tools.PickFile(this);
 		}
 		
 		private async void InputDirectory_OnClick(object? sender, RoutedEventArgs e)
 		{
-			var label = this.FindControl<TextBox>("InputControl");
-			label.Text = await Tools.PickDirectory(this);
+			InputControl.Text = await Tools.PickDirectory(this);
 		}
 		
 		private async void Output_OnClick(object? sender, RoutedEventArgs e)
 		{
-			var label = this.FindControl<TextBox>("OutputControl");
-			label.Text = await Tools.PickDirectory(this);
+			OutputControl.Text = await Tools.PickDirectory(this);
 		}
 		
-		private void Exit_OnClick(object? sender, RoutedEventArgs e)
+		private void Exit_OnClick(object? sender, RoutedEventArgs? e)
 		{
 			Environment.Exit(0);
 		}
 
-		private void Cancel_OnClick(object? sender, RoutedEventArgs e)
+		private void Cancel_OnClick(object? sender, RoutedEventArgs? e)
 		{
 			CancellationSource.Cancel();
 
@@ -72,33 +68,13 @@ namespace HardSubberGUI.Views
 			if (files == null)
 				return;
 			
-			var outputValue = this.FindControl<TextBox>("OutputControl").Text;
-
-			var subtitleIndexValue = (int)this.FindControl<NumericUpDown>("SubtitleIndexControl").Value;
-			var audioIndexValue = (int)this.FindControl<NumericUpDown>("AudioIndexControl").Value;
-			var qualityValue = (int)this.FindControl<NumericUpDown>("QualityControl").Value;
-			var resolutionOverrideWidthValue = (int)this.FindControl<NumericUpDown>("ResolutionOverrideWidthControl").Value;
-			var resolutionOverrideHeightValue = (int)this.FindControl<NumericUpDown>("ResolutionOverrideHeightControl").Value;
-
-			var hardwareAccelerationValue = (bool)this.FindControl<ToggleSwitch>("HardwareAccelerationControl").IsChecked;
-			var colorspaceValue = (bool)this.FindControl<ToggleSwitch>("ColorspaceControl").IsChecked;
-			var simultaneousValue = (bool)this.FindControl<ToggleSwitch>("SimultaneousControl").IsChecked;
-			var metadataTitleValue = (bool)this.FindControl<ToggleSwitch>("MetadataTitleControl").IsChecked;
-			var fastStartValue = (bool)this.FindControl<ToggleSwitch>("FastStartControl").IsChecked;
-			var applySubsValue = (bool)this.FindControl<ToggleSwitch>("ApplySubsControl").IsChecked;
-			var aacValue = (bool)this.FindControl<ToggleSwitch>("AACControl").IsChecked;
-			var exitValue = (bool)this.FindControl<ToggleSwitch>("ExitAfterwardsControl").IsChecked;
-
-			var cancel = this.FindControl<Button>("CancelControl");
-			var convert = this.FindControl<Button>("ConvertControl");
-			
-			var workers = simultaneousValue ? Environment.ProcessorCount / 4 : 1;
+			var workers = (bool)SimultaneousControl.IsChecked! ? Environment.ProcessorCount / 4 : 1;
 			
 			if (workers < 1)
 				workers = 1;
 
-			cancel.IsEnabled = true;
-			convert.IsEnabled = false;
+			CancelControl.IsEnabled = true;
+			ConvertControl.IsEnabled = false;
 
 			Tools.ToggleControls(this, false);
 			
@@ -111,26 +87,25 @@ namespace HardSubberGUI.Views
 				{
 					Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = CancellationSource.Token }, s =>
 					{
-						Tools.ActFile(s, outputValue, applySubsValue, subtitleIndexValue, audioIndexValue,
-							qualityValue,
-							resolutionOverrideWidthValue, resolutionOverrideHeightValue, hardwareAccelerationValue,
-							colorspaceValue, metadataTitleValue, fastStartValue, aacValue);
+						Tools.ActFile(s, OutputControl.Text, (bool)ApplySubsControl.IsChecked, (int)SubtitleIndexControl.Value, (int)AudioIndexControl.Value,
+							(int)QualityControl.Value, (int)ResolutionOverrideWidthControl.Value, (int)ResolutionOverrideHeightControl.Value, (bool)HardwareAccelerationControl.IsChecked,
+							(bool)ColorspaceControl.IsChecked, (bool)MetadataTitleControl.IsChecked, (bool)FastStartControl.IsChecked, (bool)AACControl.IsChecked);
 					});
 				}
 				catch (TaskCanceledException ex)
 				{
 					Console.WriteLine(ex);
 				}
-			}).ContinueWith((t) =>
+			}).ContinueWith(_ =>
 			{
 				Dispatcher.UIThread.Post(() =>
 				{
-					cancel.IsEnabled = false;
-					convert.IsEnabled = true;
+					CancelControl.IsEnabled = false;
+					ConvertControl.IsEnabled = true;
 					
 					Tools.ToggleControls(this, true);
 					
-					if (exitValue && !CancellationSource.IsCancellationRequested)
+					if ((bool)ExitAfterwardsControl.IsChecked! && !CancellationSource.IsCancellationRequested)
 						Exit_OnClick(null, null);
 				});
 			});

@@ -6,7 +6,7 @@ using HardSubberGUI.Views;
 
 namespace HardSubberGUI
 {
-	public partial class App : Application
+	public class App : Application
 	{
 		public override void Initialize()
 		{
