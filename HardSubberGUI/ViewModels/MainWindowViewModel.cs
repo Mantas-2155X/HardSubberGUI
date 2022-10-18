@@ -23,6 +23,7 @@ namespace HardSubberGUI.ViewModels
 		public static string Subs => "Apply Subtitles";
 		public static string Colorspace => "Reset Colorspace";
 		public static string Simultaneous => "Simultaneous Conversion";
+		public static string ExitAfterwards => "Close after conversion";
 
 		#endregion
 		

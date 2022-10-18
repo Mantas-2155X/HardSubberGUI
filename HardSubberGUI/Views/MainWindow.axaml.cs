@@ -87,6 +87,7 @@ namespace HardSubberGUI.Views
 			var fastStartValue = (bool)this.FindControl<ToggleSwitch>("FastStartControl").IsChecked;
 			var applySubsValue = (bool)this.FindControl<ToggleSwitch>("ApplySubsControl").IsChecked;
 			var aacValue = (bool)this.FindControl<ToggleSwitch>("AACControl").IsChecked;
+			var exitValue = (bool)this.FindControl<ToggleSwitch>("ExitAfterwardsControl").IsChecked;
 
 			var cancel = this.FindControl<Button>("CancelControl");
 			var convert = this.FindControl<Button>("ConvertControl");
@@ -128,6 +129,9 @@ namespace HardSubberGUI.Views
 					convert.IsEnabled = true;
 					
 					Tools.ToggleControls(this, true);
+					
+					if (exitValue && !CancellationSource.IsCancellationRequested)
+						Exit_OnClick(null, null);
 				});
 			});
 		}

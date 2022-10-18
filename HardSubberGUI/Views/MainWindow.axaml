@@ -71,6 +71,7 @@
                         <ToggleSwitch Name="ColorspaceControl" Margin="0, 0, 20, 15" IsChecked="True" Content="{Binding Colorspace}" Grid.Row="0" Grid.Column="0"/>
                         <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Margin="0, 0, 20, 15" Content="{Binding HardwareAcceleration}" Grid.Row="1" Grid.Column="0"/>
                         <ToggleSwitch Name="SimultaneousControl" Margin="0, 0, 20, 15" Content="{Binding Simultaneous}" Grid.Row="2" Grid.Column="0"/>
+                        <ToggleSwitch Name="ExitAfterwardsControl" Margin="0, 0, 20, 15" Content="{Binding ExitAfterwards}" Grid.Row="3" Grid.Column="0"/>
                         
                         <ToggleSwitch Name="MetadataTitleControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding MetadataTitle}" Grid.Row="0" Grid.Column="1"/>
                         <ToggleSwitch Name="FastStartControl" Margin="0, 0, 0, 15" IsChecked="True" Content="{Binding FastStart}" Grid.Row="1" Grid.Column="1"/>
