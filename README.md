@@ -2,7 +2,7 @@
 
 This is a simple GUI tool made with Avalonia used to burn subtitles into a video using ffmpeg.
 
-![image](img.png)
+![image](image.png)
 
 ### Usage
 * Start the executable (available optional input path parameter)
