@@ -4,6 +4,8 @@ namespace HardSubberGUI.ViewModels
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
+		public static string Version => "v1.0.0";
+		
 		#region Buttons
 
 		public static string ConvertVideos => "Convert";
@@ -42,6 +44,7 @@ namespace HardSubberGUI.ViewModels
 		#region Colors
 
 		public static IBrush MainPanelColor => new SolidColorBrush(new Color(255, 50, 50, 50));
+		public static IBrush SecondaryTextColor => new SolidColorBrush(new Color(255, 155, 155, 155));
 
 		#endregion
 	}

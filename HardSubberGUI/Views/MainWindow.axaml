@@ -19,8 +19,11 @@
     <DockPanel Margin="5">
         <!--Bottom Panel-->
         <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
-            <Button Name="ExitControl" HorizontalAlignment="Left" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick"/>
-        
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Spacing="5">
+                <Button Name="ExitControl" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick"/>
+                <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="{Binding SecondaryTextColor}" Content="{Binding Version}"/>
+            </StackPanel>
+            
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
                 <Button Name="CancelControl" IsEnabled="False" Width="125" HorizontalContentAlignment="Center" Content="{Binding Cancel}" Click="Cancel_OnClick"/>
                 <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding ConvertVideos}" Click="Convert_OnClick"/>
@@ -49,18 +52,18 @@
                 <Panel DockPanel.Dock="Left" Width="250">
                     <StackPanel>
                         <Label Content="{Binding SubtitleIndex}"/>
-                        <NumericUpDown Name="SubtitleIndexControl" FormatString="N0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="SubtitleIndexControl" FormatString="F0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding AudioIndex}"/>
-                        <NumericUpDown Name="AudioIndexControl" FormatString="N0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="AudioIndexControl" FormatString="F0" Value="0" Minimum="0" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding Quality}"/>
-                        <NumericUpDown Name="QualityControl" FormatString="N0" Minimum="0" Maximum="51" Value="22" Margin="0, 0, 0, 10"/>
+                        <NumericUpDown Name="QualityControl" FormatString="F0" Minimum="0" Maximum="51" Value="22" Margin="0, 0, 0, 10"/>
                         
                         <Label Content="{Binding ResolutionOverride}"/>
                         <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
-                            <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
-                            <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
+                            <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
+                            <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
                         </StackPanel>
                     </StackPanel>
                 </Panel>
