@@ -3,11 +3,11 @@
         xmlns:vm="using:HardSubberGUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="430"
+        mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="480"
         x:Class="HardSubberGUI.Views.MainWindow"
         Background="{Binding MainPanelColor}"
-        Width="650" Height="430"
-        MinWidth="650" MinHeight="430"
+        Width="650" Height="480"
+        MinWidth="650" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/hardsubber.ico"
         Title="HardSubberGUI">
@@ -65,6 +65,9 @@
                             <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
                             <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5"/>
                         </StackPanel>
+                        
+                        <Label Content="{Binding Threads}"/>
+                        <NumericUpDown Name="ThreadsControl" FormatString="F0" Minimum="0" Maximum="{Binding AvailableThreads}" Value="0" Margin="0, 0, 0, 10"/>
                     </StackPanel>
                 </Panel>
                 

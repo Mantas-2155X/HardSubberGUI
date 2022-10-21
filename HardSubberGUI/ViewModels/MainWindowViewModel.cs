@@ -1,10 +1,13 @@
-﻿using Avalonia.Media;
+﻿using System;
+using System.Reflection;
+using Avalonia.Media;
 
 namespace HardSubberGUI.ViewModels
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		public static string Version => "v1.0.0";
+		public static string Version => "v" + Assembly.GetEntryAssembly()!.GetName().Version;
+		public static int AvailableThreads => Environment.ProcessorCount;
 		
 		#region Buttons
 
@@ -37,7 +40,8 @@ namespace HardSubberGUI.ViewModels
 		public static string SubtitleIndex => "Subtitle Index";
 		public static string AudioIndex => "Audio Index";
 		public static string Quality => "Quality";
-		public static string ResolutionOverride => "Resolution Override";
+		public static string ResolutionOverride => "Resize Resolution";
+		public static string Threads => "Limit CPU Threads";
 
 		#endregion
 

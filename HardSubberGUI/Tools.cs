@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -96,6 +97,28 @@ namespace HardSubberGUI
 			return lspci.Contains("AMD");
 		}
 
+		// https://dotnetcodr.com/2015/11/03/divide-an-integer-into-groups-with-c/
+		public static IEnumerable<int> DistributeInteger(int total, int divider)
+		{
+			if (divider == 0)
+			{
+				yield return 0;
+			}
+			else
+			{
+				var rest = total % divider;
+				var result = total / (double)divider;
+				
+				for (var i = 0; i < divider; i++)
+				{
+					if (rest-- > 0)
+						yield return (int)Math.Ceiling(result);
+					else
+						yield return (int)Math.Floor(result);
+				}
+			}
+		}
+		
 		public static void ToggleControls(MainWindow window, bool value)
 		{
 			window.ColorspaceControl.IsEnabled = value;
@@ -149,7 +172,7 @@ namespace HardSubberGUI
 
 		public static void ActFile(string file, string output, bool processVideo, 
 			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
-			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false)
+			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0)
 		{
 			var info = new FileInfo(file);
 			
@@ -231,6 +254,9 @@ namespace HardSubberGUI
 			
 			if (faststart)
 				process.StartInfo.Arguments += "-movflags faststart ";
+			
+			if (threads > 0)
+				process.StartInfo.Arguments += $"-threads {threads} ";
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}.mp4'";

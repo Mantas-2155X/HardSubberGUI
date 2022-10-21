@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -80,16 +81,20 @@ namespace HardSubberGUI.Views
 			
 			CancellationSource.Dispose();
 			CancellationSource = new CancellationTokenSource();
-			
+
+			var threadArray = Tools.DistributeInteger((int)ThreadsControl.Value!, workers).ToList();
+
 			await Task.Run(() =>
 			{
 				try
 				{
-					Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = CancellationSource.Token }, s =>
+					var idx = -1;
+					Parallel.For(0, files.Count, new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = CancellationSource.Token }, i =>
 					{
-						Tools.ActFile(s, OutputControl.Text, (bool)ApplySubsControl.IsChecked, (int)SubtitleIndexControl.Value, (int)AudioIndexControl.Value,
+						Interlocked.Increment(ref idx);
+						Tools.ActFile(files[i], OutputControl.Text, (bool)ApplySubsControl.IsChecked, (int)SubtitleIndexControl.Value, (int)AudioIndexControl.Value,
 							(int)QualityControl.Value, (int)ResolutionOverrideWidthControl.Value, (int)ResolutionOverrideHeightControl.Value, (bool)HardwareAccelerationControl.IsChecked,
-							(bool)ColorspaceControl.IsChecked, (bool)MetadataTitleControl.IsChecked, (bool)FastStartControl.IsChecked, (bool)AACControl.IsChecked);
+							(bool)ColorspaceControl.IsChecked, (bool)MetadataTitleControl.IsChecked, (bool)FastStartControl.IsChecked, (bool)AACControl.IsChecked, threadArray[idx]);
 					});
 				}
 				catch (TaskCanceledException ex)
@@ -104,7 +109,7 @@ namespace HardSubberGUI.Views
 					ConvertControl.IsEnabled = true;
 					
 					Tools.ToggleControls(this, true);
-					
+
 					if ((bool)ExitAfterwardsControl.IsChecked! && !CancellationSource.IsCancellationRequested)
 						Exit_OnClick(null, null);
 				});
