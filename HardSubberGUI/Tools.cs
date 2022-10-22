@@ -159,7 +159,7 @@ namespace HardSubberGUI
 		{
 			var path = "";
 			
-			/*var process = new Process
+			var process = new Process
 			{
 				StartInfo = new ProcessStartInfo
 				{
@@ -176,7 +176,7 @@ namespace HardSubberGUI
 			while (!process.StandardOutput.EndOfStream)
 			{
 				path = process.StandardOutput.ReadLine();
-			}*/
+			}
 
 			if (path != "") 
 				return path!;
