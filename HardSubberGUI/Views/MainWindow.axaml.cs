@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HardSubberGUI.ViewModels;
 
 namespace HardSubberGUI.Views
 {
@@ -16,19 +17,37 @@ namespace HardSubberGUI.Views
 		{
 			InitializeComponent();
 			
+			Tools.ToggleControls(this, true);
+			Tools.FfmpegPath = Tools.GetffmpegPath();
+
+			if (Tools.FfmpegPath == "")
+			{
+				Tools.DownloadFFmpeg(this).ContinueWith(t =>
+				{
+					if (Tools.FfmpegPath == "")
+					{
+						Exit_OnClick(null, null);
+					}
+					else
+					{
+						Dispatcher.UIThread.Post(() =>
+						{
+							ConvertControl.Content = MainWindowViewModel.ConvertVideos;
+							ConvertControl.IsEnabled = true;
+						});
+					}
+				});
+			}
+
+			var args = Environment.GetCommandLineArgs();
+			if (args.Length == 2)
+				InputControl.Text = args[1];
+			
 			Closed += delegate
 			{
 				if (CancelControl.IsEnabled)
 					Cancel_OnClick(null, null);
 			};
-			
-			Tools.ToggleControls(this, true);
-			
-			var args = Environment.GetCommandLineArgs();
-			if (args.Length < 2)
-				return;
-			
-			InputControl.Text = args[1];
 		}
 
 		private async void InputFile_OnClick(object? sender, RoutedEventArgs e)

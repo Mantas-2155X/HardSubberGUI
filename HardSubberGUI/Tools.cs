@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Handlers;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using HardSubberGUI.ViewModels;
 using HardSubberGUI.Views;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 
 namespace HardSubberGUI
 {
@@ -19,6 +25,7 @@ namespace HardSubberGUI
 		public static readonly List<Process> Processes = new ();
 
 		public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		public static string FfmpegPath = "";
 		
 		public static async Task<string> PickFile(Window window)
 		{
@@ -38,9 +45,121 @@ namespace HardSubberGUI
 			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
 		}
 
-		public static string GetffmpegPath()
+		public static void RunProcess(string executable, string arguments)
 		{
 			var process = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					FileName = executable,
+					Arguments = arguments,
+					UseShellExecute = false, 
+					CreateNoWindow = true
+				}
+			};
+			
+			process.Start();
+		}
+
+		public static async Task DownloadFFmpeg(MainWindow window)
+		{
+			Console.WriteLine("System ffmpeg not found");
+			
+			Dispatcher.UIThread.Post(() =>
+			{
+				window.ConvertControl.Content = MainWindowViewModel.ConvertDownloadingffmpeg;
+				window.ConvertControl.IsEnabled = false;
+			});
+
+			var workingDir = AppDomain.CurrentDomain.BaseDirectory;
+
+			string fileName;
+			string url;
+
+			if (!IsWindows)
+			{
+				fileName = "ffmpeg-release-amd64-static.tar.xz";
+				url = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz";
+			}
+			else
+			{
+				fileName = "ffmpeg-release-essentials.zip";
+				url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
+			}
+
+			var downloadTo = Path.Combine(workingDir, fileName);
+			var moveTo = Path.Combine(workingDir, "ffmpeg");
+
+			if (!File.Exists(Path.Combine(workingDir, fileName)))
+			{
+				Console.WriteLine("Downloading ffmpeg");
+
+				var handler = new HttpClientHandler { AllowAutoRedirect = true };
+				var progress = new ProgressMessageHandler(handler);
+
+				var previousFormatted = "";
+				progress.HttpReceiveProgress += (_, args) =>
+				{
+					var percentage = (double)args.BytesTransferred / args.TotalBytes;
+					var formatted = $"{percentage:P1}";
+
+					if (previousFormatted == formatted)
+						return;
+
+					previousFormatted = formatted;
+					
+					Dispatcher.UIThread.Post(() =>
+					{
+						window.ConvertControl.Content = formatted;
+					});
+				};
+				
+				using var client = new HttpClient(progress);
+				await using var s = await client.GetStreamAsync(url);
+				
+				await using var fs = new FileStream(downloadTo, FileMode.OpenOrCreate);
+				await s.CopyToAsync(fs);
+			}
+
+			Console.WriteLine("Extracting..");
+			
+			if (!IsWindows)
+			{
+				Directory.CreateDirectory(moveTo);
+				RunProcess("tar", $"-xf {downloadTo} -C {moveTo} --strip-components 1");
+
+				FfmpegPath = Path.Combine(moveTo, "ffmpeg");
+				return;
+			}
+
+			var root = "";
+
+			await using (var stream = File.OpenRead(downloadTo))
+			{
+				var reader = ReaderFactory.Open(stream);
+				while (reader.MoveToNextEntry())
+				{
+					if (root == "")
+						root = reader.Entry.Key;
+							
+					if (reader.Entry.IsDirectory)
+						continue;
+							
+					Console.WriteLine(reader.Entry.Key);
+					reader.WriteEntryToDirectory(workingDir, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
+				}
+			}
+			
+			Directory.Move(root, moveTo);
+			
+			FfmpegPath = Path.Combine(moveTo, "bin/ffmpeg.exe");
+		}
+		
+		public static string GetffmpegPath()
+		{
+			var path = "";
+			
+			/*var process = new Process
 			{
 				StartInfo = new ProcessStartInfo
 				{
@@ -53,14 +172,23 @@ namespace HardSubberGUI
 			
 			process.StartInfo.FileName = !IsWindows ? "which" : "where.exe";
 			process.Start();
-
-			var path = "";
+			
 			while (!process.StandardOutput.EndOfStream)
 			{
 				path = process.StandardOutput.ReadLine();
-			}
+			}*/
 
-			return path ?? "";
+			if (path != "") 
+				return path!;
+			
+			var exeName = !IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
+			if (!File.Exists($"ffmpeg/{exeName}")) 
+				return path;
+				
+			Console.WriteLine("Using local installation");
+			path = $"{AppDomain.CurrentDomain.BaseDirectory}/ffmpeg/{exeName}";
+
+			return path;
 		}
 
 		public static string Getlspci()
@@ -97,7 +225,7 @@ namespace HardSubberGUI
 			return lspci.Contains("AMD");
 		}
 
-		// https://dotnetcodr.com/2015/11/03/divide-an-integer-into-groups-with-c/
+		//https://dotnetcodr.com/2015/11/03/divide-an-integer-into-groups-with-c/
 		public static IEnumerable<int> DistributeInteger(int total, int divider)
 		{
 			if (divider == 0)
@@ -264,7 +392,7 @@ namespace HardSubberGUI
 			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
-				args = $"-e \"{GetffmpegPath()} {args}\"";
+				args = $"-e \"{FfmpegPath} {args}\"";
 				
 				process.StartInfo.FileName = "xterm";
 				process.StartInfo.Arguments = args;
@@ -272,7 +400,7 @@ namespace HardSubberGUI
 			else
 			{
 				var args = process.StartInfo.Arguments;
-				args = $"\"{GetffmpegPath()} {args}\"";
+				args = $"\"{FfmpegPath} {args}\"";
 				
 				process.StartInfo.FileName = "powershell.exe";
 				process.StartInfo.Arguments = args;

@@ -12,6 +12,7 @@ namespace HardSubberGUI.ViewModels
 		#region Buttons
 
 		public static string ConvertVideos => "Convert";
+		public static string ConvertDownloadingffmpeg => "Downloading";
 		public static string Cancel => "Cancel";
 		public static string PickFile => "Pick File";
 		public static string PickDirectory => "Pick Directory";
