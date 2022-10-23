@@ -1,6 +1,6 @@
 # HardSubberGUI
 
-This is a simple GUI tool made with Avalonia used to burn subtitles into a video using ffmpeg.
+This is a simple cross platform GUI tool made with Avalonia used to burn subtitles into a video using ffmpeg.
 
 ![image](image.png)
 
