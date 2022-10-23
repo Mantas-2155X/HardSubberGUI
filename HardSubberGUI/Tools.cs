@@ -268,6 +268,7 @@ namespace HardSubberGUI
 			window.InputFileControl.IsEnabled = value;
 			window.OutputDirectoryControl.IsEnabled = value;
 			window.ExitAfterwardsControl.IsEnabled = value;
+			window.ThreadsControl.IsEnabled = value;
 		}
 		
 		public static List<string>? ProcessFiles(MainWindow window)
