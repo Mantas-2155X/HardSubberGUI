@@ -2,9 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using HardSubberGUI.ViewModels;
-using HardSubberGUI.Views;
 
-namespace HardSubberGUI
+namespace HardSubberGUI.Views
 {
 	public class App : Application
 	{

@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HardSubberGUI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="105"
+        x:Class="HardSubberGUI.Views.UpdateFoundWindow"
+        Background="{Binding MainPanelColor}"
+        CanResize="False"
+        Width="265" Height="105"
+        MinWidth="265" MinHeight="105"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/hardsubber.ico"
+        Title="HardSubberGUI">
+    
+    <Design.DataContext>
+        <vm:UpdateFoundViewModel/>
+    </Design.DataContext>
+    
+    <DockPanel Margin="5">
+        <!--Bottom Panel-->
+        <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="5">
+                <Button Name="NoControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding No}" Click="No_OnClick" ToolTip.Tip="{Binding NoTooltip}"/>
+                <Button Name="YesControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding Yes}" Click="Yes_OnClick" ToolTip.Tip="{Binding YesTooltip}"/>
+            </StackPanel>
+        </Panel>
+        
+        <!--Text-->
+        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
+    </DockPanel>
+</Window>

@@ -18,6 +18,7 @@ namespace HardSubberGUI.ViewModels
 		public static string PickFileTooltip => "Pick video file to convert";
 		public static string PickDirectoryInputTooltip => "Pick directory containing videos to convert";
 		public static string PickDirectoryOutputTooltip => "Pick directory where converted videos will be placed\nIf not specified: /output";
+		public static string ExtensionTooltip => "Output video extension\nFor cytu.be use .mp4 or .m4v";
 		
 		public static string SubtitleIndexTooltip => "Subtitle index to apply";
 		public static string AudioIndexTooltip => "Audio index to apply";
@@ -26,7 +27,7 @@ namespace HardSubberGUI.ViewModels
 		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
 		
 		public static string ColorspaceTooltip => "Reset the videos colorspace\nCan fix not loading in cytu.be";
-		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion";
+		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nmkv is not supported";
 		public static string SimultaneousTooltip => "Convert multiple videos at once\nOnly available if converting a directory\nWorker count: threads / 4";
 		public static string ExitAfterwardsTooltip => "Close HardSubberGUI after conversion is finished";
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";

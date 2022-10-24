@@ -16,40 +16,57 @@ namespace HardSubberGUI.Views
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			Closed += delegate
+			{
+				if (CancelControl.IsEnabled)
+					Cancel_OnClick(null, null);
+			};
+			
+			Opened += delegate
+			{
+				ExtensionControl.Items = Tools.SupportedVideoFormats;
+				ExtensionControl.SelectedIndex = 0;
+			};
+						
+			var args = Environment.GetCommandLineArgs();
+			if (args.Length == 2)
+				InputControl.Text = args[1];
 			
 			Tools.ToggleControls(this, true);
-			Tools.FfmpegPath = Tools.GetffmpegPath();
+			
+			BackgroundTasks();
+		}
 
-			if (Tools.FfmpegPath == "")
+		public void BackgroundTasks()
+		{
+			Tools.FfmpegPath = Tools.GetffmpegPath();
+			
+			Task.Run(() =>
 			{
-				Tools.DownloadFFmpeg(this).ContinueWith(t =>
+				if (Tools.IsOutdated())
 				{
-					if (Tools.FfmpegPath == "")
+					Dispatcher.UIThread.Post(() =>
 					{
-						Exit_OnClick(null, null);
-					}
-					else
+						var updateFound = new UpdateFoundWindow { DataContext = new UpdateFoundViewModel() };
+						updateFound.ShowDialog(this);
+					});
+				}
+
+				if (Tools.FfmpegPath == "")
+				{
+					Tools.DownloadFFmpeg(this).ContinueWith(_ =>
 					{
 						Dispatcher.UIThread.Post(() =>
 						{
 							ConvertControl.Content = MainWindowViewModel.ConvertVideos;
 							ConvertControl.IsEnabled = true;
 						});
-					}
-				});
-			}
-
-			var args = Environment.GetCommandLineArgs();
-			if (args.Length == 2)
-				InputControl.Text = args[1];
-			
-			Closed += delegate
-			{
-				if (CancelControl.IsEnabled)
-					Cancel_OnClick(null, null);
-			};
+					});
+				}
+			});
 		}
-
+		
 		private async void InputFile_OnClick(object? sender, RoutedEventArgs e)
 		{
 			InputControl.Text = await Tools.PickFile(this);
@@ -113,7 +130,7 @@ namespace HardSubberGUI.Views
 						Interlocked.Increment(ref idx);
 						Tools.ActFile(files[i], OutputControl.Text, (bool)ApplySubsControl.IsChecked, (int)SubtitleIndexControl.Value, (int)AudioIndexControl.Value,
 							(int)QualityControl.Value, (int)ResolutionOverrideWidthControl.Value, (int)ResolutionOverrideHeightControl.Value, (bool)HardwareAccelerationControl.IsChecked,
-							(bool)ColorspaceControl.IsChecked, (bool)MetadataTitleControl.IsChecked, (bool)FastStartControl.IsChecked, (bool)AACControl.IsChecked, threadArray[idx]);
+							(bool)ColorspaceControl.IsChecked, (bool)MetadataTitleControl.IsChecked, (bool)FastStartControl.IsChecked, (bool)AACControl.IsChecked, threadArray[idx], ExtensionControl.SelectedIndex);
 					});
 				}
 				catch (TaskCanceledException ex)

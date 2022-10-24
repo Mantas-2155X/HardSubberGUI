@@ -21,7 +21,7 @@ namespace HardSubberGUI
 	{
 		public static readonly string[] Escape = { " ", "[", "]", ",", ":", ";", "(", ")" };
 
-		public static readonly List<string> SupportedVideoFormats = new () { ".avi", ".mkv", ".m4v", ".mp4" };
+		public static readonly List<string> SupportedVideoFormats = new () { ".mp4", ".m4v", ".mkv", ".avi" };
 		public static readonly List<Process> Processes = new ();
 
 		public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -90,37 +90,37 @@ namespace HardSubberGUI
 			var downloadTo = Path.Combine(workingDir, fileName);
 			var moveTo = Path.Combine(workingDir, "ffmpeg");
 
-			if (!File.Exists(Path.Combine(workingDir, fileName)))
+			if (File.Exists(downloadTo))
+				File.Delete(downloadTo);
+
+			Console.WriteLine("Downloading ffmpeg");
+
+			var handler = new HttpClientHandler { AllowAutoRedirect = true };
+			var progress = new ProgressMessageHandler(handler);
+
+			var previousFormatted = "";
+			progress.HttpReceiveProgress += (_, args) =>
 			{
-				Console.WriteLine("Downloading ffmpeg");
+				var percentage = (double)args.BytesTransferred / args.TotalBytes;
+				var formatted = $"{percentage:P1}";
 
-				var handler = new HttpClientHandler { AllowAutoRedirect = true };
-				var progress = new ProgressMessageHandler(handler);
+				if (previousFormatted == formatted)
+					return;
 
-				var previousFormatted = "";
-				progress.HttpReceiveProgress += (_, args) =>
-				{
-					var percentage = (double)args.BytesTransferred / args.TotalBytes;
-					var formatted = $"{percentage:P1}";
-
-					if (previousFormatted == formatted)
-						return;
-
-					previousFormatted = formatted;
+				previousFormatted = formatted;
 					
-					Dispatcher.UIThread.Post(() =>
-					{
-						window.ConvertControl.Content = formatted;
-					});
-				};
+				Dispatcher.UIThread.Post(() =>
+				{
+					window.ConvertControl.Content = formatted;
+				});
+			};
 				
-				using var client = new HttpClient(progress);
-				await using var s = await client.GetStreamAsync(url);
+			using var client = new HttpClient(progress);
+			await using var s = await client.GetStreamAsync(url);
 				
-				await using var fs = new FileStream(downloadTo, FileMode.OpenOrCreate);
-				await s.CopyToAsync(fs);
-			}
-
+			await using var fs = new FileStream(downloadTo, FileMode.OpenOrCreate);
+			await s.CopyToAsync(fs);
+			
 			Console.WriteLine("Extracting..");
 			
 			if (!IsWindows)
@@ -154,11 +154,33 @@ namespace HardSubberGUI
 			
 			FfmpegPath = Path.Combine(moveTo, "bin/ffmpeg.exe");
 		}
+
+		public static void OpenURL(string url)
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				url = url.Replace("&", "^&");
+				Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				Process.Start("xdg-open", url);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				Process.Start("open", url);
+			}
+		}
 		
 		public static string GetffmpegPath()
 		{
-			var path = "";
-			
+			var exeName = !IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
+			if (File.Exists($"ffmpeg/{exeName}"))
+			{
+				Console.WriteLine("Using local ffmpeg installation");
+				return $"{AppDomain.CurrentDomain.BaseDirectory}/ffmpeg/{exeName}";
+			}
+
 			var process = new Process
 			{
 				StartInfo = new ProcessStartInfo
@@ -169,26 +191,17 @@ namespace HardSubberGUI
 					CreateNoWindow = true
 				}
 			};
-			
+
 			process.StartInfo.FileName = !IsWindows ? "which" : "where.exe";
 			process.Start();
-			
+
+			var path = "";
 			while (!process.StandardOutput.EndOfStream)
 			{
 				path = process.StandardOutput.ReadLine();
 			}
 
-			if (path != "") 
-				return path!;
-			
-			var exeName = !IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
-			if (!File.Exists($"ffmpeg/{exeName}")) 
-				return path;
-				
-			Console.WriteLine("Using local installation");
-			path = $"{AppDomain.CurrentDomain.BaseDirectory}/ffmpeg/{exeName}";
-
-			return path;
+			return path!;
 		}
 
 		public static string Getlspci()
@@ -214,6 +227,28 @@ namespace HardSubberGUI
 			}
 
 			return str ?? "";
+		}
+
+		public static bool IsOutdated()
+		{
+			const string lookFor = "https://github.com/Mantas-2155X/HardSubberGUI/releases/tag/";
+			
+			using var client = new HttpClient();
+			client.DefaultRequestHeaders.UserAgent.TryParseAdd("check-outdated");
+			
+			var s = client.GetStringAsync("https://api.github.com/repos/Mantas-2155X/HardSubberGUI/releases/latest").Result;
+
+			var htmlUrlIndex = s.IndexOf(lookFor, StringComparison.InvariantCultureIgnoreCase);
+			if (htmlUrlIndex == -1)
+				return false;
+
+			var tagStartIndex = htmlUrlIndex + lookFor.Length;
+			
+			var tagEndIndex = s.IndexOf("\",", tagStartIndex, StringComparison.InvariantCultureIgnoreCase);
+			if (tagEndIndex == -1)
+				return false;
+
+			return MainWindowViewModel.Version != s.Substring(tagStartIndex, tagEndIndex - tagStartIndex);
 		}
 		
 		public static bool IsHardwareAccelerationSupported()
@@ -247,11 +282,12 @@ namespace HardSubberGUI
 			}
 		}
 		
-		public static void ToggleControls(MainWindow window, bool value)
+		public static void ToggleControls(MainWindow window, bool value, bool everything = false)
 		{
 			window.ColorspaceControl.IsEnabled = value;
 			window.InputControl.IsEnabled = value;
 			window.OutputControl.IsEnabled = value;
+			window.ExtensionControl.IsEnabled = value;
 			window.QualityControl.IsEnabled = value;
 			window.SimultaneousControl.IsEnabled = value;
 			window.ApplySubsControl.IsEnabled = value;
@@ -269,6 +305,9 @@ namespace HardSubberGUI
 			window.OutputDirectoryControl.IsEnabled = value;
 			window.ExitAfterwardsControl.IsEnabled = value;
 			window.ThreadsControl.IsEnabled = value;
+
+			if (everything)
+				window.ConvertControl.IsEnabled = value;
 		}
 		
 		public static List<string>? ProcessFiles(MainWindow window)
@@ -301,7 +340,7 @@ namespace HardSubberGUI
 
 		public static void ActFile(string file, string output, bool processVideo, 
 			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
-			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0)
+			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0)
 		{
 			var info = new FileInfo(file);
 			
@@ -388,7 +427,7 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments += $"-threads {threads} ";
 			
 			process.StartInfo.Arguments += "-strict -2 ";
-			process.StartInfo.Arguments += $"'{output}/{shortName}.mp4'";
+			process.StartInfo.Arguments += $"'{output}/{shortName}{SupportedVideoFormats[format]}'";
 
 			if (!IsWindows)
 			{

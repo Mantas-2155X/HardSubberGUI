@@ -36,15 +36,18 @@
                 <!--Input File Picker Panel-->
                 <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
                     <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Input}"/>
-                    <TextBox Name="InputControl" Margin="100, 0, 195, 0"/>
+                    <TextBox Name="InputControl" Margin="100, 0, 210, 0"/>
+                    
                     <Button Name="InputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick" ToolTip.Tip="{Binding PickDirectoryInputTooltip}"/>
-                    <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="75" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick" ToolTip.Tip="{Binding PickFileTooltip}"/>
+                    <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="90" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick" ToolTip.Tip="{Binding PickFileTooltip}"/>
                 </Panel>
                 
                 <!--Output File Picker Panel-->
                 <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 25">
                     <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
-                    <TextBox Name="OutputControl" Margin="100, 0, 115, 0"/>
+                    <TextBox Name="OutputControl" Margin="100, 0, 210, 0"/>
+                    
+                    <ComboBox Name="ExtensionControl" HorizontalAlignment="Right" Width="90" Margin="0, 1, 115, 0" ToolTip.Tip="{Binding ExtensionTooltip}"></ComboBox>
                     <Button Name="OutputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick" ToolTip.Tip="{Binding PickDirectoryOutputTooltip}"/>
                 </Panel>
 
