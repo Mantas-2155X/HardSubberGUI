@@ -446,9 +446,11 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments = args;
 			}
 
-			process.Start();
 			Processes.Add(process);
+			
+			process.Start();
 			process.WaitForExit();
+			
 			Processes.Remove(process);
 		}
 	}

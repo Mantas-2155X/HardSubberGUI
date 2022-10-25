@@ -24,7 +24,7 @@ namespace HardSubberGUI.ViewModels
 		public static string AudioIndexTooltip => "Audio index to apply";
 		public static string QualityTooltip => "Quality used for conversion\nRange: 0-51 (more-less)\nRecommended: 22-26";
 		public static string ResolutionTooltip => "Resize video\nIf zero: do not resize";
-		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
+		public static string ThreadsTooltip => "Limit CPU threads used for conversion\nIf simultaneous is enabled, minimum is threads / 4";
 		
 		public static string ColorspaceTooltip => "Reset the videos colorspace\nCan fix not loading in cytu.be";
 		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nmkv is not supported";
