@@ -11,7 +11,6 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HardSubberGUI.ViewModels;
-using HardSubberGUI.Views;
 using SharpCompress.Common;
 using SharpCompress.Readers;
 
@@ -61,14 +60,14 @@ namespace HardSubberGUI
 			process.Start();
 		}
 
-		public static async Task DownloadFFmpeg(MainWindow window)
+		public static async Task DownloadFFmpeg(Button progressControl)
 		{
 			Console.WriteLine("System ffmpeg not found");
 			
 			Dispatcher.UIThread.Post(() =>
 			{
-				window.ConvertControl.Content = MainWindowViewModel.ConvertDownloadingffmpeg;
-				window.ConvertControl.IsEnabled = false;
+				progressControl.Content = MainWindowViewModel.ConvertDownloadingffmpeg;
+				progressControl.IsEnabled = false;
 			});
 
 			var workingDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -111,7 +110,7 @@ namespace HardSubberGUI
 					
 				Dispatcher.UIThread.Post(() =>
 				{
-					window.ConvertControl.Content = formatted;
+					progressControl.Content = formatted;
 				});
 			};
 				
@@ -282,62 +281,41 @@ namespace HardSubberGUI
 			}
 		}
 		
-		public static void ToggleControls(MainWindow window, bool value, bool everything = false)
+		public static List<string>? ProcessFiles(string input)
 		{
-			window.ColorspaceControl.IsEnabled = value;
-			window.InputControl.IsEnabled = value;
-			window.OutputControl.IsEnabled = value;
-			window.ExtensionControl.IsEnabled = value;
-			window.QualityControl.IsEnabled = value;
-			window.SimultaneousControl.IsEnabled = value;
-			window.ApplySubsControl.IsEnabled = value;
-			window.AudioIndexControl.IsEnabled = value;
-			window.FastStartControl.IsEnabled = value;
-			window.HardwareAccelerationControl.IsEnabled = IsHardwareAccelerationSupported() && value;
-			window.MetadataTitleControl.IsEnabled = value;
-			window.SubtitleIndexControl.IsEnabled = value;
-			window.AACControl.IsEnabled = value;
-			window.ResolutionOverrideHeightControl.IsEnabled = value;
-			window.ResolutionOverrideWidthControl.IsEnabled = value;
-			window.ExitControl.IsEnabled = value;
-			window.InputDirectoryControl.IsEnabled = value;
-			window.InputFileControl.IsEnabled = value;
-			window.OutputDirectoryControl.IsEnabled = value;
-			window.ExitAfterwardsControl.IsEnabled = value;
-			window.ThreadsControl.IsEnabled = value;
-
-			if (everything)
-				window.ConvertControl.IsEnabled = value;
-		}
-		
-		public static List<string>? ProcessFiles(MainWindow window)
-		{
-			if (string.IsNullOrEmpty(window.InputControl.Text))
+			if (string.IsNullOrEmpty(input))
 				return null;
 
-			var inputInfo = new FileInfo(window.InputControl.Text);
+			var inputInfo = new FileInfo(input);
 			
-			if (string.IsNullOrEmpty(window.OutputControl.Text))
-				window.OutputControl.Text = Path.Combine(inputInfo.Attributes.HasFlag(FileAttributes.Directory) ? window.InputControl.Text : inputInfo.FullName[..^inputInfo.Name.Length], "output");
-
-			if (!Directory.Exists(window.OutputControl.Text))
-				Directory.CreateDirectory(window.OutputControl.Text);
-
 			var files = new List<string>();
-
 			if (inputInfo.Attributes.HasFlag(FileAttributes.Directory))
 			{
-				files.AddRange(from file in Directory.GetFiles(window.InputControl.Text) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
+				files.AddRange(from file in Directory.GetFiles(input) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
 			}
 			else
 			{
 				if (SupportedVideoFormats.Contains(inputInfo.Extension))
-					files.Add(window.InputControl.Text);
+					files.Add(input);
 			}
 
 			return files.Count == 0 ? null : files.OrderBy(f => f).ToList();
 		}
 
+		public static string EscapeWindowsString(string input)
+		{
+			return input.
+				Replace("\\", "/").
+				Replace("[", "\\[").
+				Replace("]", "\\]").
+				Replace("(", "\\`(").
+				Replace(")", "\\`)").
+				Replace(" ", "\\` ").
+				Replace(",", "\\`,").
+				Replace(";", "\\`;").
+				Replace(":", "\\\\`:");
+		}
+		
 		public static void ActFile(string file, string output, bool processVideo, 
 			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
 			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0)
@@ -355,8 +333,8 @@ namespace HardSubberGUI
 				StartInfo = new ProcessStartInfo
 				{
 					UseShellExecute = true,
-					CreateNoWindow = false,
-					WindowStyle = ProcessWindowStyle.Normal
+					WindowStyle = ProcessWindowStyle.Minimized,
+					CreateNoWindow = false
 				}
 			};
 
@@ -366,31 +344,13 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
-			
+			// todo scale
 			if (processVideo)
 			{
 				var scaleString = (resw > 0 && resh > 0) ? $"scale={resw}:{resh}," : "";
-				var escaped = info.FullName;
 				
-				if (!IsWindows)
-				{
-					escaped = Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str));
-				}
-				else
-				{
-					escaped = info.FullName.Replace("\\", "/");
-					
-					escaped = escaped.Replace("[", "\\[");
-					escaped = escaped.Replace("]", "\\]");
-					
-					escaped = escaped.Replace("(", "\\`(");
-					escaped = escaped.Replace(")", "\\`)");
-					escaped = escaped.Replace(" ", "\\` ");
-					escaped = escaped.Replace(",", "\\`,");
-					escaped = escaped.Replace(";", "\\`;");
-					
-					escaped = escaped.Replace(":", "\\\\`:");
-				}
+				var escaped = info.FullName;
+				escaped = !IsWindows ? Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : EscapeWindowsString(escaped);
 
 				if (hwaccel)
 				{
@@ -432,7 +392,7 @@ namespace HardSubberGUI
 			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
-				args = $"-e \"{FfmpegPath} {args}\"";
+				args = $"-iconic -e \"{FfmpegPath} {args}\"";
 				
 				process.StartInfo.FileName = "xterm";
 				process.StartInfo.Arguments = args;

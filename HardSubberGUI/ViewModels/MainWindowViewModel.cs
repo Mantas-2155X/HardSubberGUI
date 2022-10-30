@@ -12,7 +12,6 @@ namespace HardSubberGUI.ViewModels
 		#region Tooltips
 
 		public static string ExitTooltip => "Close HardSubberGUI";
-		public static string CancelTooltip => "Cancel video conversion";
 		public static string CovertTooltip => "Start video conversion";
 		
 		public static string PickFileTooltip => "Pick video file to convert";
@@ -24,15 +23,16 @@ namespace HardSubberGUI.ViewModels
 		public static string AudioIndexTooltip => "Audio index to apply";
 		public static string QualityTooltip => "Quality used for conversion\nRange: 0-51 (more-less)\nRecommended: 22-26";
 		public static string ResolutionTooltip => "Resize video\nIf zero: do not resize";
-		public static string ThreadsTooltip => "Limit CPU threads used for conversion\nIf simultaneous is enabled, minimum is threads / 4";
+		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
 		
 		public static string ColorspaceTooltip => "Reset the videos colorspace\nCan fix not loading in cytu.be";
 		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nmkv is not supported";
-		public static string SimultaneousTooltip => "Convert multiple videos at once\nOnly available if converting a directory\nWorker count: threads / 4";
+		public static string SimultaneousTooltip => "Convert x videos at once\nOnly available if converting a directory";
 		public static string ExitAfterwardsTooltip => "Close HardSubberGUI after conversion is finished";
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
-		public static string ApplySubsTooltip => "Apply subtitles, audio and resizing";
+		public static string ApplySubsTooltip => "Apply subtitles and audio";
+		public static string ApplyResizeTooltip => "Resize the video";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
 		
 		#endregion
@@ -41,7 +41,6 @@ namespace HardSubberGUI.ViewModels
 
 		public static string ConvertVideos => "Convert";
 		public static string ConvertDownloadingffmpeg => "Downloading";
-		public static string Cancel => "Cancel";
 		public static string PickFile => "Pick File";
 		public static string PickDirectory => "Pick Directory";
 		public static string Exit => "Exit";
@@ -52,11 +51,11 @@ namespace HardSubberGUI.ViewModels
 
 		public static string HardwareAcceleration => "Hardware Acceleration";
 		public static string AAC => "Convert Audio to AAC";
-		public static string MetadataTitle => "Apply Metadata Title";
-		public static string FastStart => "Apply Faststart";
-		public static string Subs => "Apply Subtitles";
+		public static string MetadataTitle => "Set Metadata Title";
+		public static string FastStart => "Optimize for Web";
+		public static string Subs => "Burn Subtitles and Audio";
+		public static string Resize => "Resize Video";
 		public static string Colorspace => "Reset Colorspace";
-		public static string Simultaneous => "Simultaneous Conversion";
 		public static string ExitAfterwards => "Close after conversion";
 
 		#endregion
@@ -70,7 +69,8 @@ namespace HardSubberGUI.ViewModels
 		public static string AudioIndex => "Audio Index";
 		public static string Quality => "Quality";
 		public static string ResolutionOverride => "Resize Resolution";
-		public static string Threads => "Limit CPU Threads";
+		public static string Threads => "CPU Threads";
+		public static string Simultaneous => "Simultaneous";
 
 		#endregion
 

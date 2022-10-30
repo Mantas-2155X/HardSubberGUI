@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HardSubberGUI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="105"
+        x:Class="HardSubberGUI.Views.ConvertingWindow"
+        Background="{Binding MainPanelColor}"
+        CanResize="False"
+        Width="265" Height="105"
+        MinWidth="265" MinHeight="105"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/hardsubber.ico"
+        Title="HardSubberGUI">
+    
+    <Design.DataContext>
+        <vm:ConvertingViewModel/>
+    </Design.DataContext>
+    
+    <DockPanel Margin="5">
+        <!--Bottom Panel-->
+        <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="5">
+                <Button Name="CancelControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding Cancel}" Click="Cancel_OnClick" ToolTip.Tip="{Binding CancelTooltip}"/>
+            </StackPanel>
+        </Panel>
+        
+        <!--Progress-->
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock TextAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 10" Text="{Binding Text}"/>
+            <ProgressBar Name="ProgressControl" ProgressTextFormat="{Binding ProgressFormat}" ShowProgressText="True" />
+        </StackPanel>
+    </DockPanel>
+</Window>
