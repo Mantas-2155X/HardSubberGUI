@@ -30,7 +30,7 @@
         </Panel>
         
         <!--Content Panel-->
-        <Panel>
+        <Panel >
             <DockPanel>
                 <!--Input File Picker Panel-->
                 <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
@@ -42,7 +42,7 @@
                 </Panel>
                 
                 <!--Output File Picker Panel-->
-                <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 25">
+                <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 20">
                     <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
                     <TextBox Name="OutputControl" Margin="100, 0, 210, 0"/>
                     
@@ -51,56 +51,66 @@
                 </Panel>
 
                 <!--Hardsub Options Panel-->
-                <Panel DockPanel.Dock="Left" Width="250">
-                    <StackPanel>
-                        <Label Content="{Binding SubtitleIndex}"/>
-                        <NumericUpDown Name="SubtitleIndexControl" FormatString="F0" Value="0" Minimum="0" Margin="0, 0, 0, 10" ToolTip.Tip="{Binding SubtitleIndexTooltip}"/>
-                        
-                        <Label Content="{Binding AudioIndex}"/>
-                        <NumericUpDown Name="AudioIndexControl" FormatString="F0" Value="0" Minimum="0" Margin="0, 0, 0, 10" ToolTip.Tip="{Binding AudioIndexTooltip}"/>
-                        
-                        <Label Content="{Binding Quality}"/>
-                        <NumericUpDown Name="QualityControl" FormatString="F0" Minimum="0" Maximum="51" Value="24" Margin="0, 0, 0, 10" ToolTip.Tip="{Binding QualityTooltip}"/>
-                        
-                        <Label Content="{Binding ResolutionOverride}"/>
-                        <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
-                            <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5" ToolTip.Tip="{Binding ResolutionTooltip}"/>
-                            <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                <Panel DockPanel.Dock="Left" Width="250" Margin="0, 0, 0, 20">
+                    <Grid RowDefinitions="*, *, *, *, *" ColumnDefinitions="*">
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <Label Content="{Binding SubtitleIndex}"/>
+                            <NumericUpDown Name="SubtitleIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{Binding SubtitleIndexTooltip}"/>
                         </StackPanel>
                         
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Label Width="122.5" Content="{Binding Threads}"/>
-                            <Label Width="122.5" Content="{Binding Simultaneous}"/>
+                        <StackPanel Grid.Row="1" Grid.Column="0">
+                            <Label Content="{Binding AudioIndex}"/>
+                            <NumericUpDown Name="AudioIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{Binding AudioIndexTooltip}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0">
+                            <Label Content="{Binding Quality}"/>
+                            <NumericUpDown Name="QualityControl" FormatString="F0" Minimum="0" Maximum="51" Value="24" ToolTip.Tip="{Binding QualityTooltip}"/>
                         </StackPanel>
                         
-                        <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
-                            <NumericUpDown Name="ThreadsControl" FormatString="F0" Minimum="1" Maximum="{Binding AvailableThreads}" Value="{Binding AvailableThreads}" Width="122.5" ToolTip.Tip="{Binding ThreadsTooltip}"/>
-                            <NumericUpDown Name="SimultaneousControl" FormatString="F0" Minimum="1" Width="122.5" Value="1" ToolTip.Tip="{Binding SimultaneousTooltip}"/>
+                        <StackPanel Grid.Row="3" Grid.Column="0">
+                            <Label Content="{Binding ResolutionOverride}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
+                                <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                                <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="122.5" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+                        
+                        <StackPanel Grid.Row="4" Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Label Width="122.5" Content="{Binding Threads}"/>
+                                <Label Width="122.5" Content="{Binding Simultaneous}"/>
+                            </StackPanel>
+                        
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <NumericUpDown Name="ThreadsControl" FormatString="F0" Minimum="1" Maximum="{Binding AvailableThreads}" Value="{Binding AvailableThreads}" Width="122.5" ToolTip.Tip="{Binding ThreadsTooltip}"/>
+                                <NumericUpDown Name="SimultaneousControl" FormatString="F0" Minimum="1" Width="122.5" Value="1" ToolTip.Tip="{Binding SimultaneousTooltip}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </Panel>
                 
                 <!--Other Options Panel-->
-                <Panel DockPanel.Dock="Right" Margin="30, 5, 0, 0">
-                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, Auto">
-                        <ToggleSwitch Name="MetadataTitleControl" IsChecked="True" Content="{Binding MetadataTitle}" Margin="0, 0, 30, 10" 
+                <Panel DockPanel.Dock="Right" Margin="20, 0, 0, 20">
+                    <Grid RowDefinitions="*, *, *, *" ColumnDefinitions="*, *">
+                        <ToggleSwitch Name="MetadataTitleControl" IsChecked="True" Content="{Binding MetadataTitle}"
                                       Grid.Row="0" Grid.Column="0" ToolTip.Tip="{Binding MetadataTitleTooltip}"/>
-                        <ToggleSwitch Name="FastStartControl" IsChecked="True" Content="{Binding FastStart}" Margin="0, 0, 0, 10" 
+                        <ToggleSwitch Name="FastStartControl" IsChecked="True" Content="{Binding FastStart}"
                                       Grid.Row="0" Grid.Column="1" ToolTip.Tip="{Binding FastStartTooltip}"/>
                         
-                        <ToggleSwitch Name="AACControl" IsChecked="True" Content="{Binding AAC}" Margin="0, 0, 30, 10" 
+                        <ToggleSwitch Name="AACControl" IsChecked="True" Content="{Binding AAC}"
                                       Grid.Row="1" Grid.Column="0" ToolTip.Tip="{Binding AACTooltip}"/>
-                        <ToggleSwitch Name="ColorspaceControl" IsChecked="True" Content="{Binding Colorspace}" Margin="0, 0, 0, 10" 
+                        <ToggleSwitch Name="ColorspaceControl" IsChecked="True" Content="{Binding Colorspace}"
                                       Grid.Row="1" Grid.Column="1" ToolTip.Tip="{Binding ColorspaceTooltip}"/>
                         
-                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{Binding Subs}" Margin="0, 0, 30, 10" 
+                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{Binding Subs}"
                                       Grid.Row="2" Grid.Column="0" ToolTip.Tip="{Binding ApplySubsTooltip}"/>
-                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}" Margin="0, 0, 0, 10" 
+                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}"
                                       Grid.Row="2" Grid.Column="1" ToolTip.Tip="{Binding ApplyResizeTooltip}"/>
                         
-                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}" Margin="0, 0, 30, 10" 
+                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"
                                       Grid.Row="3" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
-                        <ToggleSwitch Name="ExitAfterwardsControl" Content="{Binding ExitAfterwards}" Margin="0, 0, 0, 10" 
+                        <ToggleSwitch Name="ExitAfterwardsControl" Content="{Binding ExitAfterwards}"
                                       Grid.Row="3" Grid.Column="1" ToolTip.Tip="{Binding ExitAfterwardsTooltip}"/>
                     </Grid>
                 </Panel>
