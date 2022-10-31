@@ -421,8 +421,6 @@ namespace HardSubberGUI
 			
 			process.Start();
 			process.WaitForExit();
-			
-			Processes.Remove(process);
 		}
 	}
 }

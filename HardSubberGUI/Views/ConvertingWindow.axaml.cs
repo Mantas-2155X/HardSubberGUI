@@ -51,6 +51,8 @@ namespace HardSubberGUI.Views
 
 		public async Task BeginConversion()
 		{
+			Tools.Processes.Clear();
+			
 			var inputInfo = new FileInfo(MainWindow.Instance.InputControl.Text!);
 			
 			if (string.IsNullOrEmpty(MainWindow.Instance.OutputControl.Text))
