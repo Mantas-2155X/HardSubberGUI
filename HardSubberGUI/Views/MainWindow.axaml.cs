@@ -55,6 +55,12 @@ namespace HardSubberGUI.Views
 		private void Convert_OnClick(object? sender, RoutedEventArgs e)
 		{
 			var converting = new ConvertingWindow { DataContext = new ConvertingViewModel() };
+			converting.Closed += delegate
+			{
+				IsEnabled = true;
+			};
+			
+			IsEnabled = false;
 			converting.ShowDialog(this);
 		}
 		
@@ -69,6 +75,12 @@ namespace HardSubberGUI.Views
 					Dispatcher.UIThread.Post(() =>
 					{
 						var updateFound = new UpdateFoundWindow { DataContext = new UpdateFoundViewModel() };
+						updateFound.Closed += delegate
+						{
+							IsEnabled = true;
+						};
+						
+						IsEnabled = false;
 						updateFound.ShowDialog(this);
 					});
 				}

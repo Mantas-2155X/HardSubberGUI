@@ -32,7 +32,7 @@ namespace HardSubberGUI.ViewModels
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
 		public static string ApplySubsTooltip => "Apply subtitles and audio";
-		public static string ApplyResizeTooltip => "Resize the video";
+		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not supported";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
 		
 		#endregion
