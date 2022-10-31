@@ -318,7 +318,7 @@ namespace HardSubberGUI
 		
 		public static void ActFile(string file, string output, bool processVideo, 
 			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
-			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0)
+			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0, bool resize = false)
 		{
 			var info = new FileInfo(file);
 			
@@ -337,18 +337,17 @@ namespace HardSubberGUI
 					CreateNoWindow = false
 				}
 			};
-
+			
 			process.StartInfo.Arguments += "-hide_banner -loglevel warning -stats ";
 			
 			if (hwaccel)
 				process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
-			// todo scale
 			if (processVideo)
 			{
-				var scaleString = (resw > 0 && resh > 0) ? $"scale={resw}:{resh}," : "";
-				
+				var scaleString = resize ? $"scale={resw}:{resh}," : "";
+
 				var escaped = info.FullName;
 				escaped = !IsWindows ? Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : EscapeWindowsString(escaped);
 
@@ -368,7 +367,17 @@ namespace HardSubberGUI
 			}
 			else
 			{
-				process.StartInfo.Arguments += "-c copy ";
+				if (resize)
+				{
+					process.StartInfo.Arguments += $"-vf 'scale={resw}:{resh}' ";
+				}
+				else
+				{
+					if (aac)
+						process.StartInfo.Arguments += "-c:v copy ";
+					else
+						process.StartInfo.Arguments += "-c copy ";
+				}
 			}
 
 			if (aac)
@@ -406,6 +415,8 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments = args;
 			}
 
+			Console.WriteLine(process.StartInfo.Arguments);
+			
 			Processes.Add(process);
 			
 			process.Start();
