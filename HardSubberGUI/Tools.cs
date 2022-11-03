@@ -200,6 +200,11 @@ namespace HardSubberGUI
 				path = process.StandardOutput.ReadLine();
 			}
 
+			if (IsWindows && !path!.Contains(".exe"))
+			{
+				return "";
+			}
+			
 			return path!;
 		}
 
