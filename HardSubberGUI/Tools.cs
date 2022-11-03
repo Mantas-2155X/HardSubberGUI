@@ -11,8 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HardSubberGUI.ViewModels;
-using SharpCompress.Common;
-using SharpCompress.Readers;
+using System.IO.Compression;
 
 namespace HardSubberGUI
 {
@@ -119,6 +118,13 @@ namespace HardSubberGUI
 				
 			await using var fs = new FileStream(downloadTo, FileMode.OpenOrCreate);
 			await s.CopyToAsync(fs);
+			await s.DisposeAsync();
+			s.Close();
+
+			await fs.DisposeAsync();
+			fs.Close();
+			
+			client.Dispose();
 			
 			Console.WriteLine("Extracting..");
 			
@@ -133,23 +139,23 @@ namespace HardSubberGUI
 
 			var root = "";
 
-			await using (var stream = File.OpenRead(downloadTo))
+			try
 			{
-				var reader = ReaderFactory.Open(stream);
-				while (reader.MoveToNextEntry())
-				{
-					if (root == "")
-						root = reader.Entry.Key;
-							
-					if (reader.Entry.IsDirectory)
-						continue;
-							
-					Console.WriteLine(reader.Entry.Key);
-					reader.WriteEntryToDirectory(workingDir, new ExtractionOptions() { ExtractFullPath = true, Overwrite = true });
-				}
+				ZipFile.ExtractToDirectory(downloadTo, workingDir);
+
+				var file = ZipFile.OpenRead(downloadTo);
+				
+				var entry = file.Entries.FirstOrDefault();
+				if (entry != null)
+					root = entry.FullName;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
 			}
 			
-			Directory.Move(root, moveTo);
+			if (root != "")
+				Directory.Move(root, moveTo);
 			
 			FfmpegPath = Path.Combine(moveTo, "bin/ffmpeg.exe");
 		}
