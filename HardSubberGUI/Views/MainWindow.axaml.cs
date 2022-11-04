@@ -27,7 +27,7 @@ namespace HardSubberGUI.Views
 			if (args.Length == 2)
 				InputControl.Text = args[1];
 
-			HardwareAccelerationControl.IsEnabled = Tools.IsHardwareAccelerationSupported();
+			HardwareAccelerationControl.IsEnabled = Tools.CurrentGPU != Tools.GPU.None;
 			
 			BackgroundTasks();
 		}

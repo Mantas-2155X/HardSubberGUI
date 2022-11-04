@@ -22,6 +22,7 @@ namespace HardSubberGUI
 		public static readonly List<string> SupportedVideoFormats = new () { ".mp4", ".m4v", ".mkv", ".avi" };
 		public static readonly List<Process> Processes = new ();
 
+		public static readonly GPU CurrentGPU = GetCurrentGPU();
 		public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 		public static string FfmpegPath = "";
 		
@@ -233,9 +234,34 @@ namespace HardSubberGUI
 			var str = "";
 			while (!process.StandardOutput.EndOfStream)
 			{
-				str = process.StandardOutput.ReadLine();
+				str += process.StandardOutput.ReadLine();
 			}
 
+			return str ?? "";
+		}
+
+		public static string GetVideoController()
+		{
+			var process = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					Arguments = "PATH Win32_videocontroller GET description",
+					UseShellExecute = false, 
+					RedirectStandardOutput = true,
+					CreateNoWindow = true
+				}
+			};
+			
+			process.StartInfo.FileName = "wmic";
+			process.Start();
+
+			var str = "";
+			while (!process.StandardOutput.EndOfStream)
+			{
+				str += process.StandardOutput.ReadLine();
+			}
+			
 			return str ?? "";
 		}
 
@@ -260,14 +286,19 @@ namespace HardSubberGUI
 
 			return MainWindowViewModel.Version != s.Substring(tagStartIndex, tagEndIndex - tagStartIndex);
 		}
-		
-		public static bool IsHardwareAccelerationSupported()
+
+		public static GPU GetCurrentGPU()
 		{
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
-				return false;
+			var data = !RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Getlspci() : GetVideoController();
+			Console.WriteLine("GetCurrentGPU: " + data);
 			
-			var lspci = Getlspci();
-			return lspci.Contains("AMD");
+			if (data.Contains("AMD", StringComparison.InvariantCultureIgnoreCase) || data.Contains("Radeon", StringComparison.InvariantCultureIgnoreCase))
+				return GPU.AMD;
+				
+			if (data.Contains("NVIDIA", StringComparison.InvariantCultureIgnoreCase))
+				return GPU.NVIDIA;
+
+			return GPU.None;
 		}
 
 		//https://dotnetcodr.com/2015/11/03/divide-an-integer-into-groups-with-c/
@@ -352,7 +383,35 @@ namespace HardSubberGUI
 			process.StartInfo.Arguments += "-hide_banner -loglevel warning -stats ";
 			
 			if (hwaccel)
-				process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
+			{
+				switch (CurrentGPU)
+				{
+					case GPU.AMD:
+					{
+						if (IsWindows)
+						{
+							// needs testing
+						}
+						else
+						{
+							process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
+						}
+						break;
+					}
+					case GPU.NVIDIA:
+					{
+						if (IsWindows)
+						{
+							process.StartInfo.Arguments += "-vsync 0 ";
+						}
+						else
+						{
+							// needs testing
+						}
+						break;
+					}
+				}
+			}
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
 			if (processVideo)
@@ -364,8 +423,25 @@ namespace HardSubberGUI
 
 				if (hwaccel)
 				{
-					process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
-					process.StartInfo.Arguments += "-c:v h264_vaapi ";
+					switch (CurrentGPU)
+					{
+						case GPU.AMD:
+						{
+							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
+							process.StartInfo.Arguments += "-c:v h264_vaapi ";
+							break;
+						}
+						case GPU.NVIDIA:
+						{
+							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload_cuda ";
+							process.StartInfo.Arguments += "-c:v h264_nvenc ";
+							break;
+						}
+						case GPU.None:
+						{
+							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
+						}
+					}
 				}
 				else
 				{
@@ -408,7 +484,7 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}{SupportedVideoFormats[format]}'";
-
+			
 			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
@@ -432,6 +508,13 @@ namespace HardSubberGUI
 			
 			process.Start();
 			process.WaitForExit();
+		}
+
+		public enum GPU
+		{
+			None,
+			NVIDIA,
+			AMD
 		}
 	}
 }
