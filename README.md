@@ -10,6 +10,13 @@ This is a simple cross platform GUI tool made with Avalonia used to burn subtitl
 ### Installation
 * Build the project or download latest release
 
+### Hardware Acceleration
+- [ ] Linux
+  - [x] AMD
+  - [ ] NVIDIA
+- [ ] Windows
+  - [ ] AMD
+  - [x] NVIDIA
+
 ### Notes
-* Hardware acceleration only implemented for amdgpu on linux
 * ffmpeg is required for hardsubbing. If it's not installed already, hardsubber will download it and use it locally
