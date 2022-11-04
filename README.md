@@ -15,7 +15,7 @@ This is a simple cross platform GUI tool made with Avalonia used to burn subtitl
   - [x] AMD (v1.0.1.0+)
   - [ ] NVIDIA
 - [x] Windows
-  - [x] AMD
+  - [x] AMD (v1.3.0.0+)
   - [x] NVIDIA (v1.2.0.0+)
 
 ### Notes
