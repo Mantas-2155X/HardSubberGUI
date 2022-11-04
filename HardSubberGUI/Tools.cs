@@ -388,14 +388,9 @@ namespace HardSubberGUI
 				{
 					case GPU.AMD:
 					{
-						if (IsWindows)
-						{
-							// needs testing
-						}
-						else
-						{
+						if (!IsWindows)
 							process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
-						}
+						
 						break;
 					}
 					case GPU.NVIDIA:
@@ -427,8 +422,16 @@ namespace HardSubberGUI
 					{
 						case GPU.AMD:
 						{
-							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
-							process.StartInfo.Arguments += "-c:v h264_vaapi ";
+							if (IsWindows)
+							{
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12 ";
+								process.StartInfo.Arguments += "-c:v h264_amf ";
+							}
+							else
+							{
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
+								process.StartInfo.Arguments += "-c:v h264_vaapi ";
+							}
 							break;
 						}
 						case GPU.NVIDIA:
