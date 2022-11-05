@@ -293,11 +293,18 @@ namespace HardSubberGUI
 			Console.WriteLine("GetCurrentGPU: " + data);
 			
 			if (data.Contains("AMD", StringComparison.InvariantCultureIgnoreCase) || data.Contains("Radeon", StringComparison.InvariantCultureIgnoreCase))
+			{
+				Console.WriteLine("Using AMD GPU");
 				return GPU.AMD;
+			}
 				
 			if (data.Contains("NVIDIA", StringComparison.InvariantCultureIgnoreCase))
+			{
+				Console.WriteLine("Using NVIDIA GPU");
 				return GPU.NVIDIA;
+			}
 
+			Console.WriteLine("No supported GPU found");
 			return GPU.None;
 		}
 
@@ -401,7 +408,7 @@ namespace HardSubberGUI
 						}
 						else
 						{
-							// needs testing
+							// todo: needs testing
 						}
 						break;
 					}
@@ -487,7 +494,7 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}{SupportedVideoFormats[format]}'";
-			
+			// todo: fix FfmpegPath escaping
 			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;

@@ -34,7 +34,7 @@
             <!--Input File Picker Panel-->
             <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
                 <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Input}"/>
-                <TextBox Name="InputControl" Margin="100, 0, 210, 0"/>
+                <TextBox Name="InputControl" Margin="100, 0, 210, 0" PropertyChanged="InputControl_OnPropertyChanged"/>
                 
                 <Button Name="InputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick" ToolTip.Tip="{Binding PickDirectoryInputTooltip}"/>
                 <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="90" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick" ToolTip.Tip="{Binding PickFileTooltip}"/>
@@ -71,8 +71,8 @@
                         <StackPanel Grid.Row="3" Grid.Column="0">
                             <Label Content="{Binding ResolutionOverride}"/>
                             <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
-                                <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117.5" ToolTip.Tip="{Binding ResolutionTooltip}"/>
-                                <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                                <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117.5" IsEnabled="False" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                                <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117" IsEnabled="False" ToolTip.Tip="{Binding ResolutionTooltip}"/>
                             </StackPanel>
                         </StackPanel>
                         
@@ -105,9 +105,9 @@
                         <ToggleSwitch Name="ColorspaceControl" IsChecked="True" Content="{Binding Colorspace}"
                                       Grid.Row="1" Grid.Column="1" ToolTip.Tip="{Binding ColorspaceTooltip}"/>
                     
-                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{Binding Subs}"
+                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{Binding Subs}" PropertyChanged="ApplySubsControl_OnPropertyChanged"
                                       Grid.Row="2" Grid.Column="0" ToolTip.Tip="{Binding ApplySubsTooltip}"/>
-                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}"
+                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}" PropertyChanged="ApplyResizeControl_OnPropertyChanged"
                                       Grid.Row="2" Grid.Column="1" ToolTip.Tip="{Binding ApplyResizeTooltip}"/>
                     
                         <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"

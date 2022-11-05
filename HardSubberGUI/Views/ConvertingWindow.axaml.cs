@@ -37,6 +37,12 @@ namespace HardSubberGUI.Views
 			{
 				try
 				{
+					if (Tools.Processes[index] == null || Tools.Processes[index].HasExited)
+					{
+						Console.WriteLine("Skipping killing worker " + index);
+						continue;
+					}
+					
 					Console.WriteLine("Killing worker " + index);
 					Tools.Processes[index].Kill(Tools.IsWindows);
 				}

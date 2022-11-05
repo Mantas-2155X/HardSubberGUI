@@ -19,8 +19,8 @@ namespace HardSubberGUI.ViewModels
 		public static string PickDirectoryOutputTooltip => "Pick directory where converted videos will be placed\nIf not specified: /output";
 		public static string ExtensionTooltip => "Output video extension\nFor cytu.be use .mp4 or .m4v";
 		
-		public static string SubtitleIndexTooltip => "Subtitle index to apply";
-		public static string AudioIndexTooltip => "Audio index to apply";
+		public static string SubtitleIndexTooltip => "Subtitle index to apply\nNote: The index starts from zero, not one";
+		public static string AudioIndexTooltip => "Audio index to apply\nNote: The index starts from zero, not one";
 		public static string QualityTooltip => "Quality used for conversion\nRange: 0-51 (more-less)\nRecommended: 22-26";
 		public static string ResolutionTooltip => "Resize video\nIf zero: do not resize";
 		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
@@ -32,7 +32,7 @@ namespace HardSubberGUI.ViewModels
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
 		public static string ApplySubsTooltip => "Apply subtitles and audio";
-		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not supported";
+		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not used for this";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
 		
 		#endregion

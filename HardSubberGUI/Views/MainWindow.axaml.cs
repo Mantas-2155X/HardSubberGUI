@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -62,6 +64,33 @@ namespace HardSubberGUI.Views
 			
 			IsEnabled = false;
 			converting.ShowDialog(this);
+		}
+		
+		private void ApplyResizeControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (ResolutionOverrideWidthControl == null || ResolutionOverrideHeightControl == null)
+				return;
+
+			ResolutionOverrideWidthControl.IsEnabled = (bool)ApplyResizeControl.IsChecked!;
+			ResolutionOverrideHeightControl.IsEnabled = (bool)ApplyResizeControl.IsChecked!;
+		}
+		
+		private void ApplySubsControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (SubtitleIndexControl == null || AudioIndexControl == null || QualityControl == null)
+				return;
+			
+			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
+			AudioIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
+			QualityControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
+		}
+		
+		private void InputControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (SimultaneousControl == null)
+				return;
+
+			SimultaneousControl.IsEnabled = Directory.Exists(InputControl.Text);
 		}
 		
 		public void BackgroundTasks()
