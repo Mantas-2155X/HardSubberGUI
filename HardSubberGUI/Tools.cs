@@ -181,10 +181,12 @@ namespace HardSubberGUI
 		public static string GetffmpegPath()
 		{
 			var exeName = !IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
-			if (File.Exists($"ffmpeg/{exeName}"))
+			var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"ffmpeg/{exeName}");
+			
+			if (File.Exists(exePath))
 			{
 				Console.WriteLine("Using local ffmpeg installation");
-				return $"{AppDomain.CurrentDomain.BaseDirectory}/ffmpeg/{exeName}";
+				return exePath;
 			}
 
 			var process = new Process

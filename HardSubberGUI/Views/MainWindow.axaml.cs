@@ -118,6 +118,8 @@ namespace HardSubberGUI.Views
 				{
 					Tools.DownloadFFmpeg(ConvertControl).ContinueWith(_ =>
 					{
+						Console.WriteLine("Extracted");
+						
 						Dispatcher.UIThread.Post(() =>
 						{
 							ConvertControl.Content = MainWindowViewModel.ConvertVideos;
