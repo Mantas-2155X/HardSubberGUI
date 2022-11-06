@@ -93,6 +93,19 @@ namespace HardSubberGUI.Views
 			SimultaneousControl.IsEnabled = Directory.Exists(InputControl.Text);
 		}
 		
+		private void ExtensionControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null)
+				return;
+
+			var isMkv = ExtensionControl.SelectedItem.ToString()!.Contains(".mkv");
+			
+			if (isMkv)
+				HardwareAccelerationControl.IsChecked = false;
+
+			HardwareAccelerationControl.IsEnabled = !isMkv;
+		}
+		
 		public void BackgroundTasks()
 		{
 			Tools.FfmpegPath = Tools.GetffmpegPath();

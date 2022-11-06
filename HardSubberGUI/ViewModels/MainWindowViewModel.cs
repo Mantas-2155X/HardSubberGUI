@@ -26,7 +26,7 @@ namespace HardSubberGUI.ViewModels
 		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
 		
 		public static string ColorspaceTooltip => "Reset the videos colorspace\nCan fix not loading in cytu.be";
-		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nmkv is not supported";
+		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nOutput to .mkv is not supported";
 		public static string SimultaneousTooltip => "Convert x videos at once\nOnly available if converting a directory";
 		public static string ExitAfterwardsTooltip => "Close HardSubberGUI after conversion is finished";
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";

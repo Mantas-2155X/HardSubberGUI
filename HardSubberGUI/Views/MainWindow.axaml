@@ -45,7 +45,7 @@
                 <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
                 <TextBox Name="OutputControl" Margin="100, 0, 210, 0"/>
                 
-                <ComboBox Name="ExtensionControl" HorizontalAlignment="Right" Width="90" Margin="0, 1, 115, 0" ToolTip.Tip="{Binding ExtensionTooltip}"></ComboBox>
+                <ComboBox Name="ExtensionControl" HorizontalAlignment="Right" Width="90" Margin="0, 1, 115, 0" PropertyChanged="ExtensionControl_OnPropertyChanged" ToolTip.Tip="{Binding ExtensionTooltip}"></ComboBox>
                 <Button Name="OutputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick" ToolTip.Tip="{Binding PickDirectoryOutputTooltip}"/>
             </Panel>
 
