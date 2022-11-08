@@ -1,0 +1,52 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build-Linux
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Solution
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    
+    - name: Build Solution
+      run: dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
+      
+    - name: Upload Artifact
+    - uses: actions/upload-artifact@v3
+      with:
+        name: linux-x64
+        path: HardSubberGUI/bin/Release/net6.0/linux-x64/publish/
+        retention-days: 1
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Solution
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    
+    - name: Build Solution
+      run: dotnet publish -c Release -r windows-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
+      
+    - name: Upload Artifact
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows-x64
+        path: HardSubberGUI/bin/Release/net6.0/windows-x64/publish/
+        retention-days: 1
