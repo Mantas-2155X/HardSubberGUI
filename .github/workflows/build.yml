@@ -46,5 +46,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: windows-x64
-        path: HardSubberGUI/bin/Release/net6.0/windows-x64/publish/
+        path: HardSubberGUI/bin/Release/net6.0/win-x64/publish/
         retention-days: 1
