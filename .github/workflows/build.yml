@@ -39,7 +39,7 @@ jobs:
         dotnet-version: 6.0.x
     
     - name: Build Solution
-      run: dotnet publish -c Release -r windows-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
+      run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
       
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
