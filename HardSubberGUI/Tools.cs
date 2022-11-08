@@ -410,7 +410,7 @@ namespace HardSubberGUI
 						}
 						else
 						{
-							// todo: needs testing
+							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
 						}
 						break;
 					}
