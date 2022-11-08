@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Checkout Solution
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -21,7 +21,7 @@ jobs:
       run: dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
       
     - name: Upload Artifact
-    - uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: linux-x64
         path: HardSubberGUI/bin/Release/net6.0/linux-x64/publish/
@@ -31,7 +31,7 @@ jobs:
 
     steps:
     - name: Checkout Solution
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
@@ -42,7 +42,7 @@ jobs:
       run: dotnet publish -c Release -r windows-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
       
     - name: Upload Artifact
-    - uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: windows-x64
         path: HardSubberGUI/bin/Release/net6.0/windows-x64/publish/
