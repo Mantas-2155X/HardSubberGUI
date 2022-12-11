@@ -94,7 +94,7 @@
             <!--Other Options Panel-->
             <Panel DockPanel.Dock="Right" Margin="10, 0, 0, 10">
                 <Border CornerRadius="5" Padding="5" Background="{Binding SecondaryPanelColor}">
-                    <Grid RowDefinitions="*, *, *, *" ColumnDefinitions="*, *">
+                    <Grid RowDefinitions="*, *, *, *, *" ColumnDefinitions="*, *">
                         <ToggleSwitch Name="MetadataTitleControl" IsChecked="True" Content="{Binding MetadataTitle}"
                                       Grid.Row="0" Grid.Column="0" ToolTip.Tip="{Binding MetadataTitleTooltip}"/>
                         <ToggleSwitch Name="FastStartControl" IsChecked="True" Content="{Binding FastStart}"
@@ -110,8 +110,11 @@
                         <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}" PropertyChanged="ApplyResizeControl_OnPropertyChanged"
                                       Grid.Row="2" Grid.Column="1" ToolTip.Tip="{Binding ApplyResizeTooltip}"/>
                     
+                        <ToggleSwitch Name="PGSSubsControl" IsChecked="False" Content="{Binding PGSSubs}" PropertyChanged="PGSSubsControl_OnPropertyChanged"
+                                      Grid.Row="3" Grid.Column="0" ToolTip.Tip="{Binding PGSSubsTooltip}"/>
+                        
                         <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"
-                                      Grid.Row="3" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
+                                      Grid.Row="4" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
                         <ToggleSwitch Name="ExitAfterwardsControl" Content="{Binding ExitAfterwards}"
                                       Grid.Row="3" Grid.Column="1" ToolTip.Tip="{Binding ExitAfterwardsTooltip}"/>
                     </Grid>

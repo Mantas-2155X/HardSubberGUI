@@ -95,15 +95,30 @@ namespace HardSubberGUI.Views
 		
 		private void ExtensionControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null)
+			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null || PGSSubsControl == null)
 				return;
 
-			var isMkv = ExtensionControl.SelectedItem.ToString()!.Contains(".mkv");
+			HardwareAccelerationControl.IsEnabled = !ExtensionControl.SelectedItem!.ToString()!.Contains(".mkv") && !(bool)PGSSubsControl.IsChecked! && Tools.CurrentGPU != Tools.GPU.None;
 			
-			if (isMkv)
+			if (!HardwareAccelerationControl.IsEnabled)
+				HardwareAccelerationControl.IsChecked = false;
+		}
+		
+		private void PGSSubsControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null || PGSSubsControl == null || ResolutionOverrideWidthControl == null || ResolutionOverrideHeightControl == null)
+				return;
+			
+			HardwareAccelerationControl.IsEnabled = !ExtensionControl.SelectedItem!.ToString()!.Contains(".mkv") && !(bool)PGSSubsControl.IsChecked! && Tools.CurrentGPU != Tools.GPU.None;
+			
+			if (!HardwareAccelerationControl.IsEnabled)
 				HardwareAccelerationControl.IsChecked = false;
 
-			HardwareAccelerationControl.IsEnabled = !isMkv;
+			var pgs = (bool)PGSSubsControl.IsChecked!;
+			ApplyResizeControl.IsEnabled = !pgs;
+			
+			if (!ApplyResizeControl.IsEnabled)
+				ApplyResizeControl.IsChecked = false;
 		}
 		
 		public void BackgroundTasks()

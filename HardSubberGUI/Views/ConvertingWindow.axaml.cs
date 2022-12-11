@@ -131,7 +131,7 @@ namespace HardSubberGUI.Views
 
 				Tools.ActFile(data[dataIndex], MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
 					(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
-					(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, threads, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!);
+					(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, threads, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!);
 				
 				Dispatcher.UIThread.Post(delegate
 				{

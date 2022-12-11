@@ -31,6 +31,7 @@ namespace HardSubberGUI.ViewModels
 		public static string ExitAfterwardsTooltip => "Close HardSubberGUI after conversion is finished";
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
+		public static string PGSSubsTooltip => "Hardsub PGS type subtitles\nHardware acceleration and resizing are not supported";
 		public static string ApplySubsTooltip => "Apply subtitles and audio";
 		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not used for this";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
@@ -53,6 +54,7 @@ namespace HardSubberGUI.ViewModels
 		public static string AAC => "Convert Audio to AAC";
 		public static string MetadataTitle => "Set Metadata Title";
 		public static string FastStart => "Optimize for Web";
+		public static string PGSSubs => "PGS Subtitles";
 		public static string Subs => "Burn Subtitles and Audio";
 		public static string Resize => "Resize Video";
 		public static string Colorspace => "Reset Colorspace";

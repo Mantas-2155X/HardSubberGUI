@@ -369,7 +369,7 @@ namespace HardSubberGUI
 		
 		public static void ActFile(string file, string output, bool processVideo, 
 			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
-			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0, bool resize = false)
+			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0, bool resize = false, bool pgs = false)
 		{
 			var info = new FileInfo(file);
 			
@@ -457,7 +457,11 @@ namespace HardSubberGUI
 				}
 				else
 				{
-					process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex} ";
+					if (pgs)
+						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{subtitleIndex}]overlay[v] -map [v] ";
+					else
+						process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex} ";
+
 					process.StartInfo.Arguments += "-c:v libx264 ";
 				}
 				
