@@ -31,7 +31,7 @@
                 <!--Text-->
                 <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
         
-                <ScrollViewer Padding="5, 0, 5, 0" Height="125" Background="{Binding SecondaryPanelColor}">
+                <ScrollViewer Padding="5, 0, 5, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="125" Width="365" Background="{Binding SecondaryPanelColor}">
                     <!--Changes-->
                     <TextBlock TextAlignment="Left" VerticalAlignment="Top" Name="ChangesControl"/>
                 </ScrollViewer>
