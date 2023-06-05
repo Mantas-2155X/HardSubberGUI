@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
@@ -70,24 +68,47 @@ namespace HardSubberGUI.Views
 			var files = Tools.GetFiles(MainWindow.Instance.InputControl.Text!);
 			if (files == null)
 				return;
+
+			ProgressControl.Value = 0;
+			ProgressControl.Minimum = 0;
+			ProgressControl.Maximum = files.Count;
 			
 			CancellationSource.Dispose();
 			CancellationSource = new CancellationTokenSource();
 
-			var threadArray = Tools.DistributeInteger((int)MainWindow.Instance.ThreadsControl.Value!, (int)MainWindow.Instance.SimultaneousControl.Value!).ToList();
-			
-			for (var i = 0; i < threadArray.Count; i++)
-				if (threadArray[i] == 0)
-					threadArray[i] = 1;
-			
-			ProgressControl.Value = 0;
-			
-			ProgressControl.Minimum = 0;
-			ProgressControl.Maximum = files.Count;
-			
-			await ProcessManager((int)MainWindow.Instance.SimultaneousControl.Value!, threadArray, files.ToArray()).ContinueWith(_ =>
+			var options = new object[]
 			{
-				Dispatcher.UIThread.Post(() =>
+				MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
+				(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
+				(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, -1, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!
+			};
+
+			var simul = Math.Clamp((int)MainWindow.Instance.SimultaneousControl.Value!, 1, files.Count);
+			var threads = (int)MainWindow.Instance.ThreadsControl.Value! / simul;
+
+			await Task.Run(() =>
+			{
+				Parallel.ForEach(files, new ParallelOptions {CancellationToken = CancellationSource.Token, MaxDegreeOfParallelism = simul}, file => 
+				{
+					try
+					{
+						Tools.ActFile(file, (string)options[0], (bool)options[1], (int)options[2], (int)options[3],
+							(int)options[4], (int)options[5], (int)options[6], (bool)options[7], (bool)options[8],
+							(bool)options[9], (bool)options[10], (bool)options[11], threads, (int)options[13],
+							(bool)options[14], (bool)options[15]);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine($"Exception in {file}\n" + e);
+					}
+
+					Dispatcher.UIThread.Post(delegate
+					{
+						ProgressControl.Value++;
+					});
+				});
+			
+				Dispatcher.UIThread.Post(delegate
 				{
 					if (!(bool)MainWindow.Instance.ExitAfterwardsControl.IsChecked! || CancellationSource.IsCancellationRequested)
 						return;
@@ -96,58 +117,6 @@ namespace HardSubberGUI.Views
 					MainWindow.Instance.Exit_OnClick(null, null);
 				});
 			});
-		}
-		
-		public async Task ProcessManager(int workers, List<int> threadArray, string[] data)
-		{
-			var queue = new string[workers];
-			for (var i = 0; i < queue.Length; i++) 
-				queue[i] = data[i];
-
-			var options = new object[]
-			{
-				MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
-				(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
-				(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, -1, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!
-			};
-			
-			await Task.Run(() => 
-			{
-				Console.WriteLine("Manager starting");
-
-				var tasks = new Task[workers];
-				for (var i = 0; i < workers; i++)
-				{
-					var idx = i;
-					tasks[i] = Task.Run(() => ProcessWorker(idx, workers, queue, data, threadArray[idx], options));
-				}
-				
-				Task.WaitAll(tasks, CancellationSource.Token);
-			}).ContinueWith(t =>
-			{
-				Console.WriteLine("Manager finished");
-			});
-		}
-		
-		public Task ProcessWorker(int idx, int workers, string[] queue, string[] data, int threads, object[] options)
-		{
-			var dataIndex = idx;
-			while (queue[idx] != null && !CancellationSource.IsCancellationRequested)
-			{
-				Console.WriteLine("Worker " + idx + " processing " + data[dataIndex]);
-
-				Tools.ActFile(data[dataIndex], (string)options[0], (bool)options[1], (int)options[2], (int)options[3], (int)options[4], (int)options[5], (int)options[6], (bool)options[7], (bool)options[8], (bool)options[9], (bool)options[10], (bool)options[11], threads, (int)options[13], (bool)options[14], (bool)options[15]);
-				
-				Dispatcher.UIThread.Post(delegate
-				{
-					ProgressControl.Value++;
-				});
-				
-				dataIndex += workers;
-				queue[idx] = data.Length > dataIndex ? data[dataIndex] : null;
-			}
-
-			return Task.CompletedTask;
 		}
 	}
 }
