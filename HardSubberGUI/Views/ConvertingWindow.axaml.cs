@@ -102,6 +102,8 @@ namespace HardSubberGUI.Views
 						Console.WriteLine($"Exception in {file}\n" + e);
 					}
 
+					Console.WriteLine($"Finished {file}");
+					
 					Dispatcher.UIThread.Post(delegate
 					{
 						ProgressControl.Value++;
