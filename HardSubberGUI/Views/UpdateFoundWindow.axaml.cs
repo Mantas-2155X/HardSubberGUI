@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -13,7 +14,7 @@ namespace HardSubberGUI.Views
 		private void Yes_OnClick(object? sender, RoutedEventArgs? e)
 		{
 			Tools.OpenURL("https://github.com/Mantas-2155X/HardSubberGUI/releases/latest");
-			Close();
+			Environment.Exit(0);
 		}
 		
 		private void No_OnClick(object? sender, RoutedEventArgs? e)

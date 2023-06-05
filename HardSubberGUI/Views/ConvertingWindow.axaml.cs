@@ -67,7 +67,7 @@ namespace HardSubberGUI.Views
 			if (!Directory.Exists(MainWindow.Instance.OutputControl.Text))
 				Directory.CreateDirectory(MainWindow.Instance.OutputControl.Text);
 
-			var files = Tools.ProcessFiles(MainWindow.Instance.InputControl.Text!);
+			var files = Tools.GetFiles(MainWindow.Instance.InputControl.Text!);
 			if (files == null)
 				return;
 			

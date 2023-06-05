@@ -48,7 +48,7 @@ namespace HardSubberGUI
 			return url.Substring(!IsWindows ? 7 : 8);
 		}
 
-		public static void RunProcess(string executable, string arguments)
+		public static Process RunProcess(string executable, string arguments, bool shell = false, bool nowindow = true, bool redirect = false)
 		{
 			var process = new Process
 			{
@@ -56,12 +56,14 @@ namespace HardSubberGUI
 				{
 					FileName = executable,
 					Arguments = arguments,
-					UseShellExecute = false, 
-					CreateNoWindow = true
+					UseShellExecute = shell, 
+					RedirectStandardOutput = redirect,
+					CreateNoWindow = nowindow
 				}
 			};
 			
 			process.Start();
+			return process;
 		}
 
 		public static async Task DownloadFFmpeg(Button progressControl)
@@ -193,82 +195,38 @@ namespace HardSubberGUI
 				return exePath;
 			}
 
-			var process = new Process
-			{
-				StartInfo = new ProcessStartInfo
-				{
-					Arguments = "ffmpeg",
-					UseShellExecute = false, 
-					RedirectStandardOutput = true,
-					CreateNoWindow = true
-				}
-			};
-
-			process.StartInfo.FileName = !IsWindows ? "which" : "where.exe";
-			process.Start();
-
+			var process = RunProcess(!IsWindows ? "which" : "where.exe", "ffmpeg", false, true, true);
 			var path = "";
+			
 			while (!process.StandardOutput.EndOfStream)
-			{
 				path = process.StandardOutput.ReadLine();
-			}
-
+			
 			if (IsWindows && !path!.Contains(".exe"))
-			{
 				return "";
-			}
 			
 			return path!;
 		}
 
 		public static string Getlspci()
 		{
-			var process = new Process
-			{
-				StartInfo = new ProcessStartInfo
-				{
-					Arguments = "-c \"lspci | grep VGA\"",
-					UseShellExecute = false, 
-					RedirectStandardOutput = true,
-					CreateNoWindow = true
-				}
-			};
-			
-			process.StartInfo.FileName = "/bin/sh";
-			process.Start();
-
+			var process = RunProcess("/bin/sh", "-c \"lspci | grep VGA\"", false, true, true);
 			var str = "";
+			
 			while (!process.StandardOutput.EndOfStream)
-			{
 				str += process.StandardOutput.ReadLine();
-			}
-
-			return str ?? "";
+			
+			return str;
 		}
 
 		public static string GetVideoController()
 		{
-			var process = new Process
-			{
-				StartInfo = new ProcessStartInfo
-				{
-					Arguments = "PATH Win32_videocontroller GET description",
-					UseShellExecute = false, 
-					RedirectStandardOutput = true,
-					CreateNoWindow = true
-				}
-			};
-			
-			process.StartInfo.FileName = "wmic";
-			process.Start();
-
+			var process = RunProcess("wmic", "PATH Win32_videocontroller GET description", false, true, true);
 			var str = "";
-			while (!process.StandardOutput.EndOfStream)
-			{
-				str += process.StandardOutput.ReadLine();
-			}
 			
-			return str ?? "";
+			while (!process.StandardOutput.EndOfStream)
+				str += process.StandardOutput.ReadLine();
+			
+			return str;
 		}
 
 		public static string? IsOutdated()
@@ -326,7 +284,7 @@ namespace HardSubberGUI
 			}
 		}
 		
-		public static List<string>? ProcessFiles(string input)
+		public static List<string>? GetFiles(string input)
 		{
 			if (string.IsNullOrEmpty(input))
 				return null;
@@ -393,19 +351,14 @@ namespace HardSubberGUI
 					{
 						if (!IsWindows)
 							process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
-						
 						break;
 					}
 					case GPU.NVIDIA:
 					{
 						if (IsWindows)
-						{
 							process.StartInfo.Arguments += "-vsync 0 ";
-						}
 						else
-						{
 							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
-						}
 						break;
 					}
 				}
