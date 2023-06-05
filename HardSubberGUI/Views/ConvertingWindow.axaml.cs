@@ -104,6 +104,13 @@ namespace HardSubberGUI.Views
 			for (var i = 0; i < queue.Length; i++) 
 				queue[i] = data[i];
 
+			var options = new object[]
+			{
+				MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
+				(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
+				(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, -1, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!
+			};
+			
 			await Task.Run(() => 
 			{
 				Console.WriteLine("Manager starting");
@@ -112,7 +119,7 @@ namespace HardSubberGUI.Views
 				for (var i = 0; i < workers; i++)
 				{
 					var idx = i;
-					tasks[i] = Task.Run(() => ProcessWorker(idx, workers, queue, data, threadArray[idx]));
+					tasks[i] = Task.Run(() => ProcessWorker(idx, workers, queue, data, threadArray[idx], options));
 				}
 				
 				Task.WaitAll(tasks, CancellationSource.Token);
@@ -122,16 +129,14 @@ namespace HardSubberGUI.Views
 			});
 		}
 		
-		public Task ProcessWorker(int idx, int workers, string[] queue, string[] data, int threads)
+		public Task ProcessWorker(int idx, int workers, string[] queue, string[] data, int threads, object[] options)
 		{
 			var dataIndex = idx;
 			while (queue[idx] != null && !CancellationSource.IsCancellationRequested)
 			{
 				Console.WriteLine("Worker " + idx + " processing " + data[dataIndex]);
 
-				Tools.ActFile(data[dataIndex], MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
-					(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
-					(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, threads, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!);
+				Tools.ActFile(data[dataIndex], (string)options[0], (bool)options[1], (int)options[2], (int)options[3], (int)options[4], (int)options[5], (int)options[6], (bool)options[7], (bool)options[8], (bool)options[9], (bool)options[10], (bool)options[11], threads, (int)options[13], (bool)options[14], (bool)options[15]);
 				
 				Dispatcher.UIThread.Post(delegate
 				{

@@ -7,8 +7,8 @@
         x:Class="HardSubberGUI.Views.UpdateFoundWindow"
         Background="{Binding MainPanelColor}"
         CanResize="False"
-        Width="265" Height="105"
-        MinWidth="265" MinHeight="105"
+        Width="375" Height="225"
+        MinWidth="375" MinHeight="225"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/hardsubber.ico"
         Title="HardSubberGUI">
@@ -26,7 +26,16 @@
             </StackPanel>
         </Panel>
         
-        <!--Text-->
-        <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
+        <Panel DockPanel.Dock="Top" Height="175" Background="{Binding MainPanelColor}">
+            <StackPanel Orientation="Vertical" Spacing="5">
+                <!--Text-->
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
+        
+                <ScrollViewer Padding="5, 0, 5, 0" Height="125" Background="{Binding SecondaryPanelColor}">
+                    <!--Changes-->
+                    <TextBlock TextAlignment="Left" VerticalAlignment="Top" Name="ChangesControl"/>
+                </ScrollViewer>
+            </StackPanel>
+        </Panel>
     </DockPanel>
 </Window>

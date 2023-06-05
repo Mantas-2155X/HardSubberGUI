@@ -12,6 +12,8 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HardSubberGUI.ViewModels;
 using System.IO.Compression;
+using System.Web;
+using Newtonsoft.Json.Linq;
 
 namespace HardSubberGUI
 {
@@ -32,7 +34,8 @@ namespace HardSubberGUI
 			if (result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
+			var url = HttpUtility.UrlDecode(result[0].Path.ToString());
+			return url.Substring(!IsWindows ? 7 : 8);
 		}
 
 		public static async Task<string> PickDirectory(Window window)
@@ -41,7 +44,8 @@ namespace HardSubberGUI
 			if (result.Count == 0)
 				return "";
 
-			return result[0].TryGetUri(out var uri) ? uri.ToString().Substring(!IsWindows ? 7 : 8) : "";
+			var url = HttpUtility.UrlDecode(result[0].Path.ToString());
+			return url.Substring(!IsWindows ? 7 : 8);
 		}
 
 		public static void RunProcess(string executable, string arguments)
@@ -267,26 +271,16 @@ namespace HardSubberGUI
 			return str ?? "";
 		}
 
-		public static bool IsOutdated()
+		public static string? IsOutdated()
 		{
-			const string lookFor = "https://github.com/Mantas-2155X/HardSubberGUI/releases/tag/";
-			
 			using var client = new HttpClient();
 			client.DefaultRequestHeaders.UserAgent.TryParseAdd("check-outdated");
 			
-			var s = client.GetStringAsync("https://api.github.com/repos/Mantas-2155X/HardSubberGUI/releases/latest").Result;
+			var obj = JObject.Parse(client.GetStringAsync("https://api.github.com/repos/Mantas-2155X/HardSubberGUI/releases/latest").Result);
+			if (obj == null)
+				return null;
 
-			var htmlUrlIndex = s.IndexOf(lookFor, StringComparison.InvariantCultureIgnoreCase);
-			if (htmlUrlIndex == -1)
-				return false;
-
-			var tagStartIndex = htmlUrlIndex + lookFor.Length;
-			
-			var tagEndIndex = s.IndexOf("\",", tagStartIndex, StringComparison.InvariantCultureIgnoreCase);
-			if (tagEndIndex == -1)
-				return false;
-
-			return MainWindowViewModel.Version != s.Substring(tagStartIndex, tagEndIndex - tagStartIndex);
+			return MainWindowViewModel.Version != obj["tag_name"].ToString() ? obj["body"].ToString() : null;
 		}
 
 		public static GPU GetCurrentGPU()

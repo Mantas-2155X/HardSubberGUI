@@ -27,6 +27,7 @@ namespace HardSubberGUI.ViewModels
 		#region Colors
 
 		public static IBrush MainPanelColor => new SolidColorBrush(new Color(255, 50, 50, 50));
+		public static IBrush SecondaryPanelColor => new SolidColorBrush(new Color(255, 100, 100, 100));
 
 		#endregion
 	}

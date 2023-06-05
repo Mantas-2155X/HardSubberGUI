@@ -21,7 +21,7 @@ namespace HardSubberGUI.Views
 
 			Opened += delegate
 			{
-				ExtensionControl.Items = Tools.SupportedVideoFormats;
+				ExtensionControl.ItemsSource = Tools.SupportedVideoFormats;
 				ExtensionControl.SelectedIndex = 0;
 			};
 						
@@ -127,7 +127,8 @@ namespace HardSubberGUI.Views
 			
 			Task.Run(() =>
 			{
-				if (Tools.IsOutdated())
+				var res = Tools.IsOutdated();
+				if (res != null)
 				{
 					Dispatcher.UIThread.Post(() =>
 					{
@@ -136,6 +137,8 @@ namespace HardSubberGUI.Views
 						{
 							IsEnabled = true;
 						};
+
+						updateFound.ChangesControl.Text = res;
 						
 						IsEnabled = false;
 						updateFound.ShowDialog(this);
