@@ -13,14 +13,14 @@ namespace HardSubberGUI.ViewModels
 
 		#region Labels
 
-		public static string Text => "A new update is available.\nOpen download link?";
+		public static string Text => "A new update is available.";
 
 		#endregion
 		
 		#region Buttons
 
-		public static string Yes => "Yes";
-		public static string No => "No";
+		public static string Yes => "Open Link";
+		public static string No => "Ignore";
 
 		#endregion
 		

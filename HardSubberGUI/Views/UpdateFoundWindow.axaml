@@ -6,10 +6,9 @@
         mc:Ignorable="d" d:DesignWidth="265" d:DesignHeight="105"
         x:Class="HardSubberGUI.Views.UpdateFoundWindow"
         Background="{Binding MainPanelColor}"
-        CanResize="False"
-        Width="375" Height="225"
-        MinWidth="375" MinHeight="225"
-        WindowStartupLocation="CenterScreen"
+        Width="350" Height="225"
+        MinWidth="350" MinHeight="225"
+        WindowStartupLocation="CenterOwner"
         Icon="/Assets/hardsubber.ico"
         Title="HardSubberGUI">
     
@@ -20,22 +19,22 @@
     <DockPanel Margin="5">
         <!--Bottom Panel-->
         <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="5">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
                 <Button Name="NoControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding No}" Click="No_OnClick" ToolTip.Tip="{Binding NoTooltip}"/>
                 <Button Name="YesControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding Yes}" Click="Yes_OnClick" ToolTip.Tip="{Binding YesTooltip}"/>
             </StackPanel>
         </Panel>
         
-        <Panel DockPanel.Dock="Top" Height="175" Background="{Binding MainPanelColor}">
-            <StackPanel Orientation="Vertical" Spacing="5">
-                <!--Text-->
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
+        <Panel DockPanel.Dock="Top" Background="{Binding MainPanelColor}">
+            <DockPanel>
+                <!--Title-->
+                <TextBlock DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Text}"/>
         
-                <ScrollViewer Padding="5, 0, 5, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="125" Width="365" Background="{Binding SecondaryPanelColor}">
-                    <!--Changes-->
+                <!--Changes-->
+                <ScrollViewer DockPanel.Dock="Top" Margin="0, 5, 0, 5" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="{Binding SecondaryPanelColor}">
                     <TextBlock TextAlignment="Left" VerticalAlignment="Top" Name="ChangesControl"/>
                 </ScrollViewer>
-            </StackPanel>
+            </DockPanel>
         </Panel>
     </DockPanel>
 </Window>

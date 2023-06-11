@@ -7,9 +7,9 @@
         x:Class="HardSubberGUI.Views.ConvertingWindow"
         Background="{Binding MainPanelColor}"
         CanResize="False"
-        Width="265" Height="105"
-        MinWidth="265" MinHeight="105"
-        WindowStartupLocation="CenterScreen"
+        Width="265" Height="125"
+        MinWidth="265" MinHeight="125"
+        WindowStartupLocation="CenterOwner"
         Icon="/Assets/hardsubber.ico"
         Title="HardSubberGUI">
     

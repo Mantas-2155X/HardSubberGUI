@@ -4,7 +4,7 @@ namespace HardSubberGUI.ViewModels
 {
 	public class ConvertingViewModel : ViewModelBase
 	{
-		public static string ProgressFormat => "{0}/{3} Files";
+		public static string ProgressFormat => "{0}/{3} Files Converted";
 		
 		#region Tooltips
 
@@ -14,7 +14,7 @@ namespace HardSubberGUI.ViewModels
 
 		#region Labels
 
-		public static string Text => "Converting...";
+		public static string Text => "Converting...\nSee minimized terminals for more info.";
 
 		#endregion
 		
