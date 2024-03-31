@@ -82,7 +82,6 @@ namespace HardSubberGUI.Views
 			
 			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
 			AudioIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
-			QualityControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
 		}
 		
 		private void InputControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

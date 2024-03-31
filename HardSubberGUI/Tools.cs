@@ -365,70 +365,71 @@ namespace HardSubberGUI
 			}
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
-			if (processVideo)
+			
+			var scaleString = resize ? $"scale={resw}:{resh}," : "";
+
+			var escaped = info.FullName;
+			escaped = !IsWindows ? Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : EscapeWindowsString(escaped);
+
+			if (hwaccel)
 			{
-				var scaleString = resize ? $"scale={resw}:{resh}," : "";
-
-				var escaped = info.FullName;
-				escaped = !IsWindows ? Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : EscapeWindowsString(escaped);
-
-				if (hwaccel)
+				switch (CurrentGPU)
 				{
-					switch (CurrentGPU)
+					case GPU.AMD:
 					{
-						case GPU.AMD:
+						if (IsWindows)
 						{
-							if (IsWindows)
-							{
+							if (processVideo)
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12 ";
-								process.StartInfo.Arguments += "-c:v h264_amf ";
-							}
 							else
-							{
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12 ";
+							
+							process.StartInfo.Arguments += "-c:v h264_amf ";
+						}
+						else
+						{
+							if (processVideo)
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
-								process.StartInfo.Arguments += "-c:v h264_vaapi ";
-							}
-							break;
+							else
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload ";
+
+							process.StartInfo.Arguments += "-c:v h264_vaapi ";
 						}
-						case GPU.NVIDIA:
-						{
+						break;
+					}
+					case GPU.NVIDIA:
+					{
+						if (processVideo)	
 							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload_cuda ";
-							process.StartInfo.Arguments += "-c:v h264_nvenc ";
-							break;
-						}
-						case GPU.None:
-						{
-							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
-						}
+						else
+							process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload_cuda ";
+						
+						process.StartInfo.Arguments += "-c:v h264_nvenc ";
+						break;
+					}
+					case GPU.None:
+					{
+						throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
 					}
 				}
-				else
+			}
+			else
+			{
+				if (processVideo)
 				{
 					if (pgs)
 						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{subtitleIndex}]overlay[v] -map [v] ";
 					else
 						process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex} ";
+				}
 
-					process.StartInfo.Arguments += "-c:v libx264 ";
-				}
-				
+				process.StartInfo.Arguments += "-c:v libx264 ";
+			}
+
+			if (processVideo)
 				process.StartInfo.Arguments += $"-map 0:a:{audioIndex} ";
-				process.StartInfo.Arguments += $"-qp {quality} ";
-			}
-			else
-			{
-				if (resize)
-				{
-					process.StartInfo.Arguments += $"-vf 'scale={resw}:{resh}' ";
-				}
-				else
-				{
-					if (aac)
-						process.StartInfo.Arguments += "-c:v copy ";
-					else
-						process.StartInfo.Arguments += "-c copy ";
-				}
-			}
+
+			process.StartInfo.Arguments += $"-qp {quality} ";
 
 			if (aac)
 				process.StartInfo.Arguments += "-c:a aac ";
@@ -447,7 +448,7 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{output}/{shortName}{SupportedVideoFormats[format]}'";
-			// todo: fix FfmpegPath escaping
+			
 			if (!IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
@@ -459,7 +460,7 @@ namespace HardSubberGUI
 			else
 			{
 				var args = process.StartInfo.Arguments;
-				args = $"\"{FfmpegPath} {args}\"";
+				args = $"\"& '{FfmpegPath}' {args}\"";
 				
 				process.StartInfo.FileName = "powershell.exe";
 				process.StartInfo.Arguments = args;
