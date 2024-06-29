@@ -34,7 +34,8 @@ namespace HardSubberGUI.Views
 					InputControl.Text = args[1];
 
 				HardwareAccelerationControl.IsEnabled = OSTools.CurrentGPU != EGPU.None;
-			
+				
+				Tools.LoadConversionOptions();
 				BackgroundTasks();
 			};
 		}
@@ -59,6 +60,11 @@ namespace HardSubberGUI.Views
 			Environment.Exit(0);
 		}
 
+		private void SaveOptions_OnClick(object? sender, RoutedEventArgs e)
+		{
+			Tools.SaveConversionOptions();
+		}
+		
 		private void Convert_OnClick(object? sender, RoutedEventArgs e)
 		{
 			var converting = new ConvertingWindow { DataContext = new ConvertingViewModel() };

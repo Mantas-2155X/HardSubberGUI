@@ -12,7 +12,8 @@ namespace HardSubberGUI.ViewModels
 		#region Tooltips
 
 		public static string ExitTooltip => "Close HardSubberGUI";
-		public static string CovertTooltip => "Start video conversion";
+		public static string SaveOptionsTooltip => "Save currently chosen options\nThey will automatically be applied when the application starts";
+		public static string ConvertTooltip => "Start video conversion";
 		
 		public static string PickFileTooltip => "Pick video file to convert";
 		public static string PickDirectoryInputTooltip => "Pick directory containing videos to convert";
@@ -40,6 +41,7 @@ namespace HardSubberGUI.ViewModels
 		
 		#region Buttons
 
+		public static string SaveOptions => "Save Options";
 		public static string ConvertVideos => "Convert";
 		public static string ConvertDownloadingffmpeg => "Downloading";
 		public static string PickFile => "Pick File";

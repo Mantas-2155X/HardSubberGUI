@@ -13,6 +13,7 @@ using HardSubberGUI.ViewModels;
 using System.IO.Compression;
 using HardSubberGUI.Enums;
 using HardSubberGUI.Structs;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HardSubberGUI
@@ -22,6 +23,7 @@ namespace HardSubberGUI
 		public static readonly List<Process> Processes = new ();
 
 		public static string FfmpegPath = "";
+		public static string ConversionOptionsPath = "ConversionOptions.json";
 
 		public static string GetSupportedFormatString(ESupportedFormat format)
 		{
@@ -360,6 +362,40 @@ namespace HardSubberGUI
 			
 			process.Start();
 			process.WaitForExit();
+		}
+
+		public static void SaveConversionOptions()
+		{
+			var conversionOptions = SConversionOptions.ReadFromUI();
+			
+			var json = JsonConvert.SerializeObject(conversionOptions);
+			if (json == null)
+			{
+				Console.WriteLine("Failed to serialize Conversion Options");
+				return;
+			}
+			
+			var workingDir = AppDomain.CurrentDomain.BaseDirectory;
+			var optionsPath = Path.Combine(workingDir, ConversionOptionsPath);
+			
+			File.WriteAllText(optionsPath, json);
+			Console.WriteLine("Saved current Conversion Options");
+		}
+
+		public static void LoadConversionOptions()
+		{
+			var workingDir = AppDomain.CurrentDomain.BaseDirectory;
+			var optionsPath = Path.Combine(workingDir, ConversionOptionsPath);
+			
+			if (!File.Exists(optionsPath))
+				return;
+
+			var text = File.ReadAllText(optionsPath);
+			
+			var conversionOptions = JsonConvert.DeserializeObject<SConversionOptions>(text);
+			conversionOptions.ApplyToUI();
+			
+			Console.WriteLine("Applied saved Conversion Options");
 		}
 	}
 }

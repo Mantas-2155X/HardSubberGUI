@@ -25,7 +25,8 @@
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
-                <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding ConvertVideos}" Click="Convert_OnClick" ToolTip.Tip="{Binding CovertTooltip}"/>
+                <Button Name="SaveOptionsControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding SaveOptions}" Click="SaveOptions_OnClick" ToolTip.Tip="{Binding SaveOptionsTooltip}"/>
+                <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding ConvertVideos}" Click="Convert_OnClick" ToolTip.Tip="{Binding ConvertTooltip}"/>
             </StackPanel>
         </Panel>
         
