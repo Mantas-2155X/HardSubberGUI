@@ -128,6 +128,24 @@ namespace HardSubberGUI.Views
 			
 			if (!ApplyResizeControl.IsEnabled)
 				ApplyResizeControl.IsChecked = false;
+			
+			ExternalSubsControl.IsEnabled = !(bool)PGSSubsControl.IsChecked!;
+			
+			if (!ExternalSubsControl.IsEnabled)
+				ExternalSubsControl.IsChecked = false;
+		}
+		
+		private void ExternalSubsControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+		{
+			if (!initialized)
+				return;
+			
+			PGSSubsControl.IsEnabled = !(bool)ExternalSubsControl.IsChecked!;
+			
+			if (!PGSSubsControl.IsEnabled)
+				PGSSubsControl.IsChecked = false;
+			
+			SubtitleIndexControl.IsEnabled = !(bool)ExternalSubsControl.IsChecked!;
 		}
 		
 		public void BackgroundTasks()

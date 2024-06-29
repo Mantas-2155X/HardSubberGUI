@@ -20,6 +20,7 @@ namespace HardSubberGUI.Structs
 		public bool FastStart;
 		public bool Resize;
 		public bool CloseAfterwards;
+		public bool ExternalSubs;
 
 		public ESupportedFormat Format;
 
@@ -46,6 +47,7 @@ namespace HardSubberGUI.Structs
 			options.UsePGS = MainWindow.Instance.PGSSubsControl.IsChecked.Value;
 			options.Resize = MainWindow.Instance.ApplyResizeControl.IsChecked.Value;
 			options.CloseAfterwards = MainWindow.Instance.ExitAfterwardsControl.IsChecked.Value;
+			options.ExternalSubs = MainWindow.Instance.ExternalSubsControl.IsChecked.Value;
 			options.ResizeResolution = new[] { (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value };
 			options.SubtitleIndex = (int)MainWindow.Instance.SubtitleIndexControl.Value;
 			options.AudioIndex = (int)MainWindow.Instance.AudioIndexControl.Value;
@@ -69,6 +71,7 @@ namespace HardSubberGUI.Structs
 			MainWindow.Instance.PGSSubsControl.IsChecked = UsePGS;
 			MainWindow.Instance.ApplyResizeControl.IsChecked = Resize;
 			MainWindow.Instance.ExitAfterwardsControl.IsChecked = CloseAfterwards;
+			MainWindow.Instance.ExternalSubsControl.IsChecked = ExternalSubs;
 			MainWindow.Instance.ResolutionOverrideWidthControl.Value = ResizeResolution[0];
 			MainWindow.Instance.ResolutionOverrideHeightControl.Value = ResizeResolution[1];
 			MainWindow.Instance.SubtitleIndexControl.Value = SubtitleIndex;

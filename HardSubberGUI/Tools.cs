@@ -256,11 +256,35 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
 			
+			var subsFilter = "";
+			var streamIndex = "";
+			
 			var scaleString = conversionOptions.Resize ? $"scale={conversionOptions.ResizeResolution[0]}:{conversionOptions.ResizeResolution[1]}," : "";
-
+			
 			var escaped = info.FullName;
 			escaped = !OSTools.IsWindows ? FileTools.Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : FileTools.EscapeWindowsString(escaped);
 
+			if (conversionOptions.ExternalSubs)
+			{
+				var newPath = escaped[..^info.Extension.Length];
+				
+				if (File.Exists(newPath + ".srt"))
+				{
+					escaped = newPath + ".srt";
+					subsFilter = "subtitles";
+				}
+				else if (File.Exists(newPath + ".ass"))
+				{
+					escaped = newPath + ".ass";
+					subsFilter = "ass";
+				}
+			}
+			else
+			{
+				subsFilter = "subtitles";
+				streamIndex = $":stream_index={conversionOptions.SubtitleIndex}";
+			}
+			
 			if (conversionOptions.UseHWAccel)
 			{
 				switch (OSTools.CurrentGPU)
@@ -270,7 +294,7 @@ namespace HardSubberGUI
 						if (OSTools.IsWindows)
 						{
 							if (conversionOptions.BurnSubsAndAudio)
-								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12 ";
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}{subsFilter}={escaped}{streamIndex},format=nv12 ";
 							else
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12 ";
 							
@@ -279,7 +303,7 @@ namespace HardSubberGUI
 						else
 						{
 							if (conversionOptions.BurnSubsAndAudio)
-								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12,hwupload ";
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}{subsFilter}={escaped}{streamIndex},format=nv12,hwupload ";
 							else
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload ";
 
@@ -290,7 +314,7 @@ namespace HardSubberGUI
 					case EGPU.NVIDIA:
 					{
 						if (conversionOptions.BurnSubsAndAudio)	
-							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12,hwupload_cuda ";
+							process.StartInfo.Arguments += $"-filter_complex {scaleString}{subsFilter}={escaped}{streamIndex},format=nv12,hwupload_cuda ";
 						else
 							process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload_cuda ";
 						
@@ -310,7 +334,7 @@ namespace HardSubberGUI
 					if (conversionOptions.UsePGS)
 						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{conversionOptions.SubtitleIndex}]overlay[v] -map [v] ";
 					else
-						process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex} ";
+						process.StartInfo.Arguments += $"-filter_complex {scaleString}{subsFilter}={escaped}:stream_index={conversionOptions.SubtitleIndex} ";
 				}
 
 				process.StartInfo.Arguments += "-c:v libx264 ";

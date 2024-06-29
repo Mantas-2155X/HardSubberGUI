@@ -36,6 +36,7 @@ namespace HardSubberGUI.ViewModels
 		public static string ApplySubsTooltip => "Apply subtitles and audio";
 		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not used for this";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
+		public static string ExternalSubsTooltip => "Use external subtitles\nMust be an .ass or .srt file next to the video file with the same name";
 		
 		#endregion
 		
@@ -61,6 +62,7 @@ namespace HardSubberGUI.ViewModels
 		public static string Resize => "Resize Video";
 		public static string Colorspace => "Reset Colorspace";
 		public static string ExitAfterwards => "Close after conversion";
+		public static string ExternalSubs => "External Subtitles";
 
 		#endregion
 		

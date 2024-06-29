@@ -113,11 +113,13 @@
                     
                         <ToggleSwitch Name="PGSSubsControl" IsChecked="False" Content="{Binding PGSSubs}" PropertyChanged="PGSSubsControl_OnPropertyChanged"
                                       Grid.Row="3" Grid.Column="0" ToolTip.Tip="{Binding PGSSubsTooltip}"/>
-                        
-                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"
-                                      Grid.Row="4" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
                         <ToggleSwitch Name="ExitAfterwardsControl" Content="{Binding ExitAfterwards}"
                                       Grid.Row="3" Grid.Column="1" ToolTip.Tip="{Binding ExitAfterwardsTooltip}"/>
+
+                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"
+                                      Grid.Row="4" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
+                        <ToggleSwitch Name="ExternalSubsControl" IsEnabled = "False" Content="{Binding ExternalSubs}" PropertyChanged="ExternalSubsControl_OnPropertyChanged"
+                                      Grid.Row="4" Grid.Column="1" ToolTip.Tip="{Binding ExternalSubsTooltip}"/>
                     </Grid>
                 </Border>
             </Panel>
