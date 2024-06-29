@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HardSubberGUI.Enums;
 using HardSubberGUI.ViewModels;
 
 namespace HardSubberGUI.Views
@@ -12,6 +13,8 @@ namespace HardSubberGUI.Views
 	public partial class MainWindow : Window
 	{
 		public static MainWindow Instance;
+		
+		private bool initialized;
 		
 		public MainWindow()
 		{
@@ -21,32 +24,34 @@ namespace HardSubberGUI.Views
 
 			Opened += delegate
 			{
-				ExtensionControl.ItemsSource = Tools.SupportedVideoFormats;
+				ExtensionControl.ItemsSource = Tools.GetSupportedFormatStrings();
 				ExtensionControl.SelectedIndex = 0;
-			};
-						
-			var args = Environment.GetCommandLineArgs();
-			if (args.Length == 2)
-				InputControl.Text = args[1];
+				
+				initialized = true;
+				
+				var args = Environment.GetCommandLineArgs();
+				if (args.Length == 2)
+					InputControl.Text = args[1];
 
-			HardwareAccelerationControl.IsEnabled = Tools.CurrentGPU != Tools.GPU.None;
+				HardwareAccelerationControl.IsEnabled = OSTools.CurrentGPU != EGPU.None;
 			
-			BackgroundTasks();
+				BackgroundTasks();
+			};
 		}
 		
 		private async void InputFile_OnClick(object? sender, RoutedEventArgs e)
 		{
-			InputControl.Text = await Tools.PickFile(this);
+			InputControl.Text = await FileTools.PickFile(this);
 		}
 		
 		private async void InputDirectory_OnClick(object? sender, RoutedEventArgs e)
 		{
-			InputControl.Text = await Tools.PickDirectory(this);
+			InputControl.Text = await FileTools.PickDirectory(this);
 		}
 		
 		private async void Output_OnClick(object? sender, RoutedEventArgs e)
 		{
-			OutputControl.Text = await Tools.PickDirectory(this);
+			OutputControl.Text = await FileTools.PickDirectory(this);
 		}
 		
 		public void Exit_OnClick(object? sender, RoutedEventArgs? e)
@@ -68,7 +73,7 @@ namespace HardSubberGUI.Views
 		
 		private void ApplyResizeControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (ResolutionOverrideWidthControl == null || ResolutionOverrideHeightControl == null)
+			if (!initialized)
 				return;
 
 			ResolutionOverrideWidthControl.IsEnabled = (bool)ApplyResizeControl.IsChecked!;
@@ -77,7 +82,7 @@ namespace HardSubberGUI.Views
 		
 		private void ApplySubsControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (SubtitleIndexControl == null || AudioIndexControl == null || QualityControl == null)
+			if (!initialized)
 				return;
 			
 			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
@@ -86,7 +91,7 @@ namespace HardSubberGUI.Views
 		
 		private void InputControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (SimultaneousControl == null)
+			if (!initialized)
 				return;
 
 			SimultaneousControl.IsEnabled = Directory.Exists(InputControl.Text);
@@ -94,10 +99,10 @@ namespace HardSubberGUI.Views
 		
 		private void ExtensionControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null || PGSSubsControl == null)
+			if (!initialized)
 				return;
 
-			HardwareAccelerationControl.IsEnabled = !ExtensionControl.SelectedItem!.ToString()!.Contains(".mkv") && !(bool)PGSSubsControl.IsChecked! && Tools.CurrentGPU != Tools.GPU.None;
+			HardwareAccelerationControl.IsEnabled = (ESupportedFormat)ExtensionControl.SelectedIndex != ESupportedFormat.mkv && !(bool)PGSSubsControl.IsChecked! && OSTools.CurrentGPU != EGPU.None;
 			
 			if (!HardwareAccelerationControl.IsEnabled)
 				HardwareAccelerationControl.IsChecked = false;
@@ -105,16 +110,15 @@ namespace HardSubberGUI.Views
 		
 		private void PGSSubsControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
-			if (HardwareAccelerationControl == null || ExtensionControl.SelectedItem == null || PGSSubsControl == null || ResolutionOverrideWidthControl == null || ResolutionOverrideHeightControl == null)
+			if (!initialized)
 				return;
 			
-			HardwareAccelerationControl.IsEnabled = !ExtensionControl.SelectedItem!.ToString()!.Contains(".mkv") && !(bool)PGSSubsControl.IsChecked! && Tools.CurrentGPU != Tools.GPU.None;
+			HardwareAccelerationControl.IsEnabled = (ESupportedFormat)ExtensionControl.SelectedIndex != ESupportedFormat.mkv && !(bool)PGSSubsControl.IsChecked! && OSTools.CurrentGPU != EGPU.None;
 			
 			if (!HardwareAccelerationControl.IsEnabled)
 				HardwareAccelerationControl.IsChecked = false;
 
-			var pgs = (bool)PGSSubsControl.IsChecked!;
-			ApplyResizeControl.IsEnabled = !pgs;
+			ApplyResizeControl.IsEnabled = !(bool)PGSSubsControl.IsChecked!;
 			
 			if (!ApplyResizeControl.IsEnabled)
 				ApplyResizeControl.IsChecked = false;

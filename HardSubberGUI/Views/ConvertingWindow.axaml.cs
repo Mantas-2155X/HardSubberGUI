@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using HardSubberGUI.Structs;
 
 namespace HardSubberGUI.Views
 {
@@ -42,7 +43,7 @@ namespace HardSubberGUI.Views
 					}
 					
 					Console.WriteLine("Killing worker " + index);
-					Tools.Processes[index].Kill(Tools.IsWindows);
+					Tools.Processes[index].Kill(OSTools.IsWindows);
 				}
 				catch (Exception ex)
 				{
@@ -65,7 +66,7 @@ namespace HardSubberGUI.Views
 			if (!Directory.Exists(MainWindow.Instance.OutputControl.Text))
 				Directory.CreateDirectory(MainWindow.Instance.OutputControl.Text);
 
-			var files = Tools.GetFiles(MainWindow.Instance.InputControl.Text!);
+			var files = FileTools.GetFiles(MainWindow.Instance.InputControl.Text!);
 			if (files == null)
 				return;
 
@@ -76,13 +77,8 @@ namespace HardSubberGUI.Views
 			CancellationSource.Dispose();
 			CancellationSource = new CancellationTokenSource();
 
-			var options = new object[]
-			{
-				MainWindow.Instance.OutputControl.Text!, (bool)MainWindow.Instance.ApplySubsControl.IsChecked!, (int)MainWindow.Instance.SubtitleIndexControl.Value!, (int)MainWindow.Instance.AudioIndexControl.Value!,
-				(int)MainWindow.Instance.QualityControl.Value!, (int)MainWindow.Instance.ResolutionOverrideWidthControl.Value!, (int)MainWindow.Instance.ResolutionOverrideHeightControl.Value!, (bool)MainWindow.Instance.HardwareAccelerationControl.IsChecked!,
-				(bool)MainWindow.Instance.ColorspaceControl.IsChecked!, (bool)MainWindow.Instance.MetadataTitleControl.IsChecked!, (bool)MainWindow.Instance.FastStartControl.IsChecked!, (bool)MainWindow.Instance.AACControl.IsChecked!, -1, MainWindow.Instance.ExtensionControl.SelectedIndex, (bool)MainWindow.Instance.ApplyResizeControl.IsChecked!, (bool)MainWindow.Instance.PGSSubsControl.IsChecked!
-			};
-
+			var conversionOptions = SConversionOptions.ReadFromUI();
+			
 			var simul = Math.Clamp((int)MainWindow.Instance.SimultaneousControl.Value!, 1, files.Count);
 			var threads = (int)MainWindow.Instance.ThreadsControl.Value! / simul;
 
@@ -92,10 +88,7 @@ namespace HardSubberGUI.Views
 				{
 					try
 					{
-						Tools.ActFile(file, (string)options[0], (bool)options[1], (int)options[2], (int)options[3],
-							(int)options[4], (int)options[5], (int)options[6], (bool)options[7], (bool)options[8],
-							(bool)options[9], (bool)options[10], (bool)options[11], threads, (int)options[13],
-							(bool)options[14], (bool)options[15]);
+						Tools.ActFile(file, conversionOptions, threads);
 					}
 					catch (Exception e)
 					{

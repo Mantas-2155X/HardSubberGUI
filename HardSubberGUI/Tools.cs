@@ -8,46 +8,36 @@ using System.Net.Http.Handlers;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using HardSubberGUI.ViewModels;
 using System.IO.Compression;
-using System.Web;
+using HardSubberGUI.Enums;
+using HardSubberGUI.Structs;
 using Newtonsoft.Json.Linq;
 
 namespace HardSubberGUI
 {
 	public static class Tools
 	{
-		public static readonly string[] Escape = { " ", "[", "]", ",", ":", ";", "(", ")" };
-
-		public static readonly List<string> SupportedVideoFormats = new () { ".mp4", ".m4v", ".mkv", ".avi" };
 		public static readonly List<Process> Processes = new ();
 
-		public static readonly GPU CurrentGPU = GetCurrentGPU();
-		public static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 		public static string FfmpegPath = "";
+
+		public static string GetSupportedFormatString(ESupportedFormat format)
+		{
+			return $".{format.ToString()}";
+		}
+
+		public static List<string> GetSupportedFormatStrings()
+		{
+			var list = new List<string>();
+			
+			for (var i = 0; i < Enum.GetValues(typeof(ESupportedFormat)).Length; i++)
+				list.Add(GetSupportedFormatString((ESupportedFormat)i));
+			
+			return list;
+		}
 		
-		public static async Task<string> PickFile(Window window)
-		{
-			var result = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {AllowMultiple = false, Title = "Select a file"});
-			if (result.Count == 0)
-				return "";
-
-			var url = HttpUtility.UrlDecode(result[0].Path.ToString());
-			return url.Substring(!IsWindows ? 7 : 8);
-		}
-
-		public static async Task<string> PickDirectory(Window window)
-		{
-			var result = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {AllowMultiple = false, Title = "Select a directory"});
-			if (result.Count == 0)
-				return "";
-
-			var url = HttpUtility.UrlDecode(result[0].Path.ToString());
-			return url.Substring(!IsWindows ? 7 : 8);
-		}
-
 		public static Process RunProcess(string executable, string arguments, bool shell = false, bool nowindow = true, bool redirect = false)
 		{
 			var process = new Process
@@ -66,6 +56,23 @@ namespace HardSubberGUI
 			return process;
 		}
 
+		public static void OpenURL(string url)
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				url = url.Replace("&", "^&");
+				Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				Process.Start("xdg-open", url);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				Process.Start("open", url);
+			}
+		}
+
 		public static async Task DownloadFFmpeg(Button progressControl)
 		{
 			Console.WriteLine("System ffmpeg not found");
@@ -81,7 +88,7 @@ namespace HardSubberGUI
 			string fileName;
 			string url;
 
-			if (!IsWindows)
+			if (!OSTools.IsWindows)
 			{
 				fileName = "ffmpeg-release-amd64-static.tar.xz";
 				url = "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz";
@@ -135,7 +142,7 @@ namespace HardSubberGUI
 			
 			Console.WriteLine("Extracting..");
 			
-			if (!IsWindows)
+			if (!OSTools.IsWindows)
 			{
 				Directory.CreateDirectory(moveTo);
 				RunProcess("tar", $"-xf {downloadTo} -C {moveTo} --strip-components 1");
@@ -166,27 +173,10 @@ namespace HardSubberGUI
 			
 			FfmpegPath = Path.Combine(moveTo, "bin/ffmpeg.exe");
 		}
-
-		public static void OpenURL(string url)
-		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				url = url.Replace("&", "^&");
-				Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				Process.Start("xdg-open", url);
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				Process.Start("open", url);
-			}
-		}
 		
 		public static string GetffmpegPath()
 		{
-			var exeName = !IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
+			var exeName = !OSTools.IsWindows ? "ffmpeg" : "bin/ffmpeg.exe";
 			var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"ffmpeg/{exeName}");
 			
 			if (File.Exists(exePath))
@@ -195,38 +185,16 @@ namespace HardSubberGUI
 				return exePath;
 			}
 
-			var process = RunProcess(!IsWindows ? "which" : "where.exe", "ffmpeg", false, true, true);
+			var process = RunProcess(!OSTools.IsWindows ? "which" : "where.exe", "ffmpeg", false, true, true);
 			var path = "";
 			
 			while (!process.StandardOutput.EndOfStream)
 				path = process.StandardOutput.ReadLine();
 			
-			if (IsWindows && !path!.Contains(".exe"))
+			if (OSTools.IsWindows && !path!.Contains(".exe"))
 				return "";
 			
 			return path!;
-		}
-
-		public static string Getlspci()
-		{
-			var process = RunProcess("/bin/sh", "-c \"lspci | grep VGA\"", false, true, true);
-			var str = "";
-			
-			while (!process.StandardOutput.EndOfStream)
-				str += process.StandardOutput.ReadLine();
-			
-			return str;
-		}
-
-		public static string GetVideoController()
-		{
-			var process = RunProcess("wmic", "PATH Win32_videocontroller GET description", false, true, true);
-			var str = "";
-			
-			while (!process.StandardOutput.EndOfStream)
-				str += process.StandardOutput.ReadLine();
-			
-			return str;
 		}
 
 		public static string? IsOutdated()
@@ -240,88 +208,8 @@ namespace HardSubberGUI
 
 			return MainWindowViewModel.Version != obj["tag_name"].ToString() ? obj["body"].ToString() : null;
 		}
-
-		public static GPU GetCurrentGPU()
-		{
-			var data = !RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Getlspci() : GetVideoController();
-			Console.WriteLine("GetCurrentGPU: " + data);
-			
-			if (data.Contains("AMD", StringComparison.InvariantCultureIgnoreCase) || data.Contains("Radeon", StringComparison.InvariantCultureIgnoreCase))
-			{
-				Console.WriteLine("Using AMD GPU");
-				return GPU.AMD;
-			}
-				
-			if (data.Contains("NVIDIA", StringComparison.InvariantCultureIgnoreCase))
-			{
-				Console.WriteLine("Using NVIDIA GPU");
-				return GPU.NVIDIA;
-			}
-
-			Console.WriteLine("No supported GPU found");
-			return GPU.None;
-		}
-
-		//https://dotnetcodr.com/2015/11/03/divide-an-integer-into-groups-with-c/
-		public static IEnumerable<int> DistributeInteger(int total, int divider)
-		{
-			if (divider == 0)
-			{
-				yield return 0;
-			}
-			else
-			{
-				var rest = total % divider;
-				var result = total / (double)divider;
-				
-				for (var i = 0; i < divider; i++)
-				{
-					if (rest-- > 0)
-						yield return (int)Math.Ceiling(result);
-					else
-						yield return (int)Math.Floor(result);
-				}
-			}
-		}
 		
-		public static List<string>? GetFiles(string input)
-		{
-			if (string.IsNullOrEmpty(input))
-				return null;
-
-			var inputInfo = new FileInfo(input);
-			
-			var files = new List<string>();
-			if (inputInfo.Attributes.HasFlag(FileAttributes.Directory))
-			{
-				files.AddRange(from file in Directory.GetFiles(input) select new FileInfo(file) into info where SupportedVideoFormats.Contains(info.Extension) select info.FullName);
-			}
-			else
-			{
-				if (SupportedVideoFormats.Contains(inputInfo.Extension))
-					files.Add(input);
-			}
-
-			return files.Count == 0 ? null : files.OrderBy(f => f).ToList();
-		}
-
-		public static string EscapeWindowsString(string input)
-		{
-			return input.
-				Replace("\\", "/").
-				Replace("[", "\\[").
-				Replace("]", "\\]").
-				Replace("(", "\\`(").
-				Replace(")", "\\`)").
-				Replace(" ", "\\` ").
-				Replace(",", "\\`,").
-				Replace(";", "\\`;").
-				Replace(":", "\\\\`:");
-		}
-		
-		public static void ActFile(string file, string output, bool processVideo, 
-			int subtitleIndex = 0, int audioIndex = 0, int quality = 0, int resw = 0, int resh = 0, 
-			bool hwaccel = false, bool colorspace = false, bool title = false, bool faststart = false, bool aac = false, int threads = 0, int format = 0, bool resize = false, bool pgs = false)
+		public static void ActFile(string file, SConversionOptions conversionOptions, int threads)
 		{
 			var info = new FileInfo(file);
 			
@@ -343,19 +231,19 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += "-hide_banner -loglevel warning -stats ";
 			
-			if (hwaccel)
+			if (conversionOptions.UseHWAccel)
 			{
-				switch (CurrentGPU)
+				switch (OSTools.CurrentGPU)
 				{
-					case GPU.AMD:
+					case EGPU.AMD:
 					{
-						if (!IsWindows)
+						if (!OSTools.IsWindows)
 							process.StartInfo.Arguments += "-vaapi_device /dev/dri/renderD128 ";
 						break;
 					}
-					case GPU.NVIDIA:
+					case EGPU.NVIDIA:
 					{
-						if (IsWindows)
+						if (OSTools.IsWindows)
 							process.StartInfo.Arguments += "-vsync 0 ";
 						else
 							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
@@ -366,21 +254,21 @@ namespace HardSubberGUI
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
 			
-			var scaleString = resize ? $"scale={resw}:{resh}," : "";
+			var scaleString = conversionOptions.Resize ? $"scale={conversionOptions.ResizeResolution[0]}:{conversionOptions.ResizeResolution[1]}," : "";
 
 			var escaped = info.FullName;
-			escaped = !IsWindows ? Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : EscapeWindowsString(escaped);
+			escaped = !OSTools.IsWindows ? FileTools.Escape.Aggregate(info.FullName, (current, str) => current.Replace(str, "\\\\\\" + str)) : FileTools.EscapeWindowsString(escaped);
 
-			if (hwaccel)
+			if (conversionOptions.UseHWAccel)
 			{
-				switch (CurrentGPU)
+				switch (OSTools.CurrentGPU)
 				{
-					case GPU.AMD:
+					case EGPU.AMD:
 					{
-						if (IsWindows)
+						if (OSTools.IsWindows)
 						{
-							if (processVideo)
-								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12 ";
+							if (conversionOptions.BurnSubsAndAudio)
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12 ";
 							else
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12 ";
 							
@@ -388,8 +276,8 @@ namespace HardSubberGUI
 						}
 						else
 						{
-							if (processVideo)
-								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload ";
+							if (conversionOptions.BurnSubsAndAudio)
+								process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12,hwupload ";
 							else
 								process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload ";
 
@@ -397,17 +285,17 @@ namespace HardSubberGUI
 						}
 						break;
 					}
-					case GPU.NVIDIA:
+					case EGPU.NVIDIA:
 					{
-						if (processVideo)	
-							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex},format=nv12,hwupload_cuda ";
+						if (conversionOptions.BurnSubsAndAudio)	
+							process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex},format=nv12,hwupload_cuda ";
 						else
 							process.StartInfo.Arguments += $"-filter_complex {scaleString}format=nv12,hwupload_cuda ";
 						
 						process.StartInfo.Arguments += "-c:v h264_nvenc ";
 						break;
 					}
-					case GPU.None:
+					case EGPU.None:
 					{
 						throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
 					}
@@ -415,41 +303,41 @@ namespace HardSubberGUI
 			}
 			else
 			{
-				if (processVideo)
+				if (conversionOptions.BurnSubsAndAudio)
 				{
-					if (pgs)
-						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{subtitleIndex}]overlay[v] -map [v] ";
+					if (conversionOptions.UsePGS)
+						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{conversionOptions.SubtitleIndex}]overlay[v] -map [v] ";
 					else
-						process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={subtitleIndex} ";
+						process.StartInfo.Arguments += $"-filter_complex {scaleString}subtitles={escaped}:stream_index={conversionOptions.SubtitleIndex} ";
 				}
 
 				process.StartInfo.Arguments += "-c:v libx264 ";
 			}
 
-			if (processVideo)
-				process.StartInfo.Arguments += $"-map 0:a:{audioIndex} ";
+			if (conversionOptions.BurnSubsAndAudio)
+				process.StartInfo.Arguments += $"-map 0:a:{conversionOptions.AudioIndex} ";
 
-			process.StartInfo.Arguments += $"-qp {quality} ";
+			process.StartInfo.Arguments += $"-qp {conversionOptions.Quality} ";
 
-			if (aac)
+			if (conversionOptions.ConvertAudio)
 				process.StartInfo.Arguments += "-c:a aac ";
 
-			if (colorspace)
+			if (conversionOptions.ConvertColorspace)
 				process.StartInfo.Arguments += "-color_primaries unknown -color_trc unknown -colorspace unknown ";
 			
-			if (title)
+			if (conversionOptions.ApplyMetadataTitle)
 				process.StartInfo.Arguments += $"-metadata title='{shortName}' ";
 			
-			if (faststart)
+			if (conversionOptions.FastStart)
 				process.StartInfo.Arguments += "-movflags faststart ";
 			
 			if (threads > 0)
 				process.StartInfo.Arguments += $"-threads {threads} ";
 			
 			process.StartInfo.Arguments += "-strict -2 ";
-			process.StartInfo.Arguments += $"'{output}/{shortName}{SupportedVideoFormats[format]}'";
+			process.StartInfo.Arguments += $"'{conversionOptions.OutputPath}/{shortName}{GetSupportedFormatString(conversionOptions.Format)}'";
 			
-			if (!IsWindows)
+			if (!OSTools.IsWindows)
 			{
 				var args = process.StartInfo.Arguments;
 				args = $"-iconic -e \"{FfmpegPath} {args}\"";
@@ -472,13 +360,6 @@ namespace HardSubberGUI
 			
 			process.Start();
 			process.WaitForExit();
-		}
-
-		public enum GPU
-		{
-			None,
-			NVIDIA,
-			AMD
 		}
 	}
 }
