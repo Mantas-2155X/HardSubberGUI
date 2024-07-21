@@ -91,8 +91,18 @@ namespace HardSubberGUI.Views
 			if (!initialized)
 				return;
 			
-			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
+			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked! && !(bool)ExternalSubsControl.IsChecked!;
 			AudioIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
+			
+            ExternalSubsControl.IsEnabled = (bool)ApplySubsControl.IsChecked! && !(bool)PGSSubsControl.IsChecked!;
+            
+            if (!ExternalSubsControl.IsEnabled)
+	            ExternalSubsControl.IsChecked = false;
+            
+            PGSSubsControl.IsEnabled = (bool)ApplySubsControl.IsChecked! && !(bool)ExternalSubsControl.IsChecked!;
+
+            if (!PGSSubsControl.IsEnabled)
+	            PGSSubsControl.IsChecked = false;
 		}
 		
 		private void InputControl_OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -128,8 +138,11 @@ namespace HardSubberGUI.Views
 			
 			if (!ApplyResizeControl.IsEnabled)
 				ApplyResizeControl.IsChecked = false;
-			
-			ExternalSubsControl.IsEnabled = !(bool)PGSSubsControl.IsChecked!;
+
+			if ((bool)PGSSubsControl.IsChecked)
+				ExternalSubsControl.IsEnabled = false;
+			else
+				ExternalSubsControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
 			
 			if (!ExternalSubsControl.IsEnabled)
 				ExternalSubsControl.IsChecked = false;
@@ -145,7 +158,10 @@ namespace HardSubberGUI.Views
 			if (!PGSSubsControl.IsEnabled)
 				PGSSubsControl.IsChecked = false;
 			
-			SubtitleIndexControl.IsEnabled = !(bool)ExternalSubsControl.IsChecked!;
+			if ((bool)ExternalSubsControl.IsChecked)
+				SubtitleIndexControl.IsEnabled = false;
+			else
+				SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
 		}
 		
 		public void BackgroundTasks()
