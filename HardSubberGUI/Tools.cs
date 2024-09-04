@@ -340,8 +340,7 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments += "-c:v libx264 ";
 			}
 
-			if (conversionOptions.BurnSubsAndAudio)
-				process.StartInfo.Arguments += $"-map 0:a:{conversionOptions.AudioIndex} ";
+			process.StartInfo.Arguments += $"-map 0:a:{conversionOptions.AudioIndex} ";
 
 			process.StartInfo.Arguments += $"-qp {conversionOptions.Quality} ";
 

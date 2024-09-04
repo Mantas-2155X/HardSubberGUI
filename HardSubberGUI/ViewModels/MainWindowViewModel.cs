@@ -58,7 +58,7 @@ namespace HardSubberGUI.ViewModels
 		public static string MetadataTitle => "Set Metadata Title";
 		public static string FastStart => "Optimize for Web";
 		public static string PGSSubs => "PGS Subtitles";
-		public static string Subs => "Burn Subtitles and Audio";
+		public static string Subs => "Burn Subtitles";
 		public static string Resize => "Resize Video";
 		public static string Colorspace => "Reset Colorspace";
 		public static string ExitAfterwards => "Close after conversion";

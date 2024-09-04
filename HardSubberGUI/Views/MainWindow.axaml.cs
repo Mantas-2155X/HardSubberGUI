@@ -92,7 +92,6 @@ namespace HardSubberGUI.Views
 				return;
 			
 			SubtitleIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked! && !(bool)ExternalSubsControl.IsChecked!;
-			AudioIndexControl.IsEnabled = (bool)ApplySubsControl.IsChecked!;
 			
             ExternalSubsControl.IsEnabled = (bool)ApplySubsControl.IsChecked! && !(bool)PGSSubsControl.IsChecked!;
             
