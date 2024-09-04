@@ -33,7 +33,7 @@ namespace HardSubberGUI.ViewModels
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
 		public static string PGSSubsTooltip => "Hardsub PGS type subtitles\nHardware acceleration and resizing are not supported";
-		public static string ApplySubsTooltip => "Apply subtitles and audio";
+		public static string ApplySubsTooltip => "Apply subtitles";
 		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not used for this";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";
 		public static string ExternalSubsTooltip => "Use external subtitles\nMust be an .ass or .srt file next to the video file with the same name";
