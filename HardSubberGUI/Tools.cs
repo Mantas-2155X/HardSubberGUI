@@ -342,6 +342,9 @@ namespace HardSubberGUI
 
 			process.StartInfo.Arguments += $"-map 0:a:{conversionOptions.AudioIndex} ";
 
+			if (!conversionOptions.BurnSubsAndAudio && !conversionOptions.UseHWAccel)
+				process.StartInfo.Arguments += "-map 0:v ";
+			
 			process.StartInfo.Arguments += $"-qp {conversionOptions.Quality} ";
 
 			if (conversionOptions.ConvertAudio)
