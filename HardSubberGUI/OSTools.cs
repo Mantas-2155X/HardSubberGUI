@@ -20,15 +20,40 @@ namespace HardSubberGUI
 			return str;
 		}
 
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		public struct DISPLAY_DEVICE
+		{
+			public int cb;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+			public string DeviceName;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+			public string DeviceString;
+			public uint StateFlags;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+			public string DeviceID;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+			public string DeviceKey;
+		}
+
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		private static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
+		
 		public static string GetVideoController()
 		{
-			using var searcher = new System.Management.ManagementObjectSearcher(
-				"root\\CIMV2", 
-				"SELECT Description FROM Win32_VideoController"
-			);
+			var dd = new DISPLAY_DEVICE();
+			dd.cb = Marshal.SizeOf(dd);
 
-			foreach (var obj in searcher.Get())
-				return obj["Description"]?.ToString()?.Trim() ?? "Unknown";
+			uint deviceIndex = 0;
+			while (EnumDisplayDevices(null, deviceIndex, ref dd, 0))
+			{
+				// Look for the primary display adapter (usually the GPU)
+				if ((dd.StateFlags & 0x00000001) != 0) // DISPLAY_DEVICE_PRIMARY_DEVICE
+				{
+					if (!string.IsNullOrWhiteSpace(dd.DeviceString))
+						return dd.DeviceString.Trim();
+				}
+				deviceIndex++;
+			}
 
 			return "";
 		}
