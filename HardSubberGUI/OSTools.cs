@@ -22,13 +22,15 @@ namespace HardSubberGUI
 
 		public static string GetVideoController()
 		{
-			var process = Tools.RunProcess("wmic", "PATH Win32_videocontroller GET description", false, true, true);
-			var str = "";
-			
-			while (!process.StandardOutput.EndOfStream)
-				str += process.StandardOutput.ReadLine();
-			
-			return str;
+			using var searcher = new System.Management.ManagementObjectSearcher(
+				"root\\CIMV2", 
+				"SELECT Description FROM Win32_VideoController"
+			);
+
+			foreach (var obj in searcher.Get())
+				return obj["Description"]?.ToString()?.Trim() ?? "Unknown";
+
+			return "";
 		}
 		
 		public static EGPU GetCurrentGPU()
