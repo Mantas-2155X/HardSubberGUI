@@ -1,5 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 using System;
 using System.IO;
 using HardSubberGUI.Views;
@@ -27,6 +27,6 @@ namespace HardSubberGUI
 			BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 		}
 
-		public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
+		public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI(rui => {  });
 	}
 }

@@ -3,14 +3,16 @@
         xmlns:vm="using:HardSubberGUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:HardSubberGUI.ViewModels"
         mc:Ignorable="d" d:DesignWidth="650" d:DesignHeight="480"
         x:Class="HardSubberGUI.Views.MainWindow"
-        Background="{Binding MainPanelColor}"
+        Background="{CompiledBinding MainPanelColor}"
         Width="650" Height="480"
         MinWidth="650" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/hardsubber.ico"
-        Title="HardSubberGUI">
+        Title="HardSubberGUI"
+        x:DataType="viewModels:MainWindowViewModel">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -18,15 +20,15 @@
 
     <DockPanel Margin="5">
         <!--Bottom Panel-->
-        <Panel DockPanel.Dock="Bottom" Height="30" Background="{Binding MainPanelColor}">
+        <Panel DockPanel.Dock="Bottom" Height="30" Background="{CompiledBinding MainPanelColor}">
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Spacing="5">
-                <Button Name="ExitControl" Width="50" HorizontalContentAlignment="Center" Content="{Binding Exit}" Click="Exit_OnClick" ToolTip.Tip="{Binding ExitTooltip}"/>
-                <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="{Binding SecondaryTextColor}" Content="{Binding Version}"/>
+                <Button Name="ExitControl" Width="50" HorizontalContentAlignment="Center" Content="{CompiledBinding Exit}" Click="Exit_OnClick" ToolTip.Tip="{CompiledBinding ExitTooltip}"/>
+                <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="{CompiledBinding SecondaryTextColor}" Content="{CompiledBinding Version}"/>
             </StackPanel>
             
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
-                <Button Name="SaveOptionsControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding SaveOptions}" Click="SaveOptions_OnClick" ToolTip.Tip="{Binding SaveOptionsTooltip}"/>
-                <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{Binding ConvertVideos}" Click="Convert_OnClick" ToolTip.Tip="{Binding ConvertTooltip}"/>
+                <Button Name="SaveOptionsControl" Width="125" HorizontalContentAlignment="Center" Content="{CompiledBinding SaveOptions}" Click="SaveOptions_OnClick" ToolTip.Tip="{CompiledBinding SaveOptionsTooltip}"/>
+                <Button Name="ConvertControl" Width="125" HorizontalContentAlignment="Center" Content="{CompiledBinding ConvertVideos}" Click="Convert_OnClick" ToolTip.Tip="{CompiledBinding ConvertTooltip}"/>
             </StackPanel>
         </Panel>
         
@@ -34,58 +36,58 @@
         <DockPanel>
             <!--Input File Picker Panel-->
             <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 5">
-                <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Input}"/>
+                <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{CompiledBinding Input}"/>
                 <TextBox Name="InputControl" Margin="100, 0, 210, 0" PropertyChanged="InputControl_OnPropertyChanged"/>
                 
-                <Button Name="InputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="InputDirectory_OnClick" ToolTip.Tip="{Binding PickDirectoryInputTooltip}"/>
-                <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="90" HorizontalContentAlignment="Left" Content="{Binding PickFile}" Click="InputFile_OnClick" ToolTip.Tip="{Binding PickFileTooltip}"/>
+                <Button Name="InputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{CompiledBinding PickDirectory}" Click="InputDirectory_OnClick" ToolTip.Tip="{CompiledBinding PickDirectoryInputTooltip}"/>
+                <Button Name="InputFileControl" HorizontalAlignment="Right" Margin="0, 0, 115, 0" Width="90" HorizontalContentAlignment="Left" Content="{CompiledBinding PickFile}" Click="InputFile_OnClick" ToolTip.Tip="{CompiledBinding PickFileTooltip}"/>
             </Panel>
             
             <!--Output File Picker Panel-->
             <Panel DockPanel.Dock="Top" Height="34" Margin="0, 0, 0, 10">
-                <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding Output}"/>
+                <Label HorizontalAlignment="Left" Width="100" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{CompiledBinding Output}"/>
                 <TextBox Name="OutputControl" Margin="100, 0, 210, 0"/>
                 
-                <ComboBox Name="ExtensionControl" HorizontalAlignment="Right" Width="90" Margin="0, 1, 115, 0" PropertyChanged="ExtensionControl_OnPropertyChanged" ToolTip.Tip="{Binding ExtensionTooltip}"></ComboBox>
-                <Button Name="OutputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{Binding PickDirectory}" Click="Output_OnClick" ToolTip.Tip="{Binding PickDirectoryOutputTooltip}"/>
+                <ComboBox Name="ExtensionControl" HorizontalAlignment="Right" Width="90" Margin="0, 1, 115, 0" PropertyChanged="ExtensionControl_OnPropertyChanged" ToolTip.Tip="{CompiledBinding ExtensionTooltip}"></ComboBox>
+                <Button Name="OutputDirectoryControl" HorizontalAlignment="Right" Width="110" HorizontalContentAlignment="Left" Content="{CompiledBinding PickDirectory}" Click="Output_OnClick" ToolTip.Tip="{CompiledBinding PickDirectoryOutputTooltip}"/>
             </Panel>
 
             <!--Hardsub Options Panel-->
             <Panel DockPanel.Dock="Left" Width="250" Margin="0, 0, 0, 10">
-                <Border CornerRadius="5" Padding="5" Background="{Binding SecondaryPanelColor}">
+                <Border CornerRadius="5" Padding="5" Background="{CompiledBinding SecondaryPanelColor}">
                     <Grid RowDefinitions="*, *, *, *, *" ColumnDefinitions="*">
                         <StackPanel Grid.Row="0" Grid.Column="0">
-                            <Label Content="{Binding SubtitleIndex}"/>
-                            <NumericUpDown Name="SubtitleIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{Binding SubtitleIndexTooltip}"/>
+                            <Label Content="{CompiledBinding SubtitleIndex}"/>
+                            <NumericUpDown Name="SubtitleIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{CompiledBinding SubtitleIndexTooltip}"/>
                         </StackPanel>
                         
                         <StackPanel Grid.Row="1" Grid.Column="0">
-                            <Label Content="{Binding AudioIndex}"/>
-                            <NumericUpDown Name="AudioIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{Binding AudioIndexTooltip}"/>
+                            <Label Content="{CompiledBinding AudioIndex}"/>
+                            <NumericUpDown Name="AudioIndexControl" FormatString="F0" Value="0" Minimum="0" ToolTip.Tip="{CompiledBinding AudioIndexTooltip}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Row="2" Grid.Column="0">
-                            <Label Content="{Binding Quality}"/>
-                            <NumericUpDown Name="QualityControl" FormatString="F0" Minimum="0" Maximum="51" Value="24" ToolTip.Tip="{Binding QualityTooltip}"/>
+                            <Label Content="{CompiledBinding Quality}"/>
+                            <NumericUpDown Name="QualityControl" FormatString="F0" Minimum="0" Maximum="51" Value="24" ToolTip.Tip="{CompiledBinding QualityTooltip}"/>
                         </StackPanel>
                         
                         <StackPanel Grid.Row="3" Grid.Column="0">
-                            <Label Content="{Binding ResolutionOverride}"/>
+                            <Label Content="{CompiledBinding ResolutionOverride}"/>
                             <StackPanel Orientation="Horizontal" Spacing="5" Margin="0, 0, 0, 10">
-                                <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117.5" IsEnabled="False" ToolTip.Tip="{Binding ResolutionTooltip}"/>
-                                <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117" IsEnabled="False" ToolTip.Tip="{Binding ResolutionTooltip}"/>
+                                <NumericUpDown Name="ResolutionOverrideWidthControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117.5" IsEnabled="False" ToolTip.Tip="{CompiledBinding ResolutionTooltip}"/>
+                                <NumericUpDown Name="ResolutionOverrideHeightControl" Value="0" FormatString="F0" Minimum="0" AllowSpin="False" ShowButtonSpinner="False" Width="117" IsEnabled="False" ToolTip.Tip="{CompiledBinding ResolutionTooltip}"/>
                             </StackPanel>
                         </StackPanel>
                         
                         <StackPanel Grid.Row="4" Grid.Column="0">
                             <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Label Width="117.5" Content="{Binding Threads}"/>
-                                <Label Width="117" Content="{Binding Simultaneous}"/>
+                                <Label Width="117.5" Content="{CompiledBinding Threads}"/>
+                                <Label Width="117" Content="{CompiledBinding Simultaneous}"/>
                             </StackPanel>
                         
                             <StackPanel Orientation="Horizontal" Spacing="5">
-                                <NumericUpDown Name="ThreadsControl" FormatString="F0" Minimum="1" Maximum="{Binding AvailableThreads}" Value="{Binding AvailableThreads}" Width="117.5" ToolTip.Tip="{Binding ThreadsTooltip}"/>
-                                <NumericUpDown Name="SimultaneousControl" FormatString="F0" Minimum="1" Width="117" Value="1" ToolTip.Tip="{Binding SimultaneousTooltip}"/>
+                                <NumericUpDown Name="ThreadsControl" FormatString="F0" Minimum="1" Maximum="{CompiledBinding AvailableThreads}" Value="{CompiledBinding AvailableThreads}" Width="117.5" ToolTip.Tip="{CompiledBinding ThreadsTooltip}"/>
+                                <NumericUpDown Name="SimultaneousControl" FormatString="F0" Minimum="1" Width="117" Value="1" IsEnabled="False" ToolTip.Tip="{CompiledBinding SimultaneousTooltip}"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
@@ -94,32 +96,32 @@
             
             <!--Other Options Panel-->
             <Panel DockPanel.Dock="Right" Margin="10, 0, 0, 10">
-                <Border CornerRadius="5" Padding="5" Background="{Binding SecondaryPanelColor}">
+                <Border CornerRadius="5" Padding="5" Background="{CompiledBinding SecondaryPanelColor}">
                     <Grid RowDefinitions="*, *, *, *, *" ColumnDefinitions="*, *">
-                        <ToggleSwitch Name="MetadataTitleControl" IsChecked="True" Content="{Binding MetadataTitle}"
-                                      Grid.Row="0" Grid.Column="0" ToolTip.Tip="{Binding MetadataTitleTooltip}"/>
-                        <ToggleSwitch Name="FastStartControl" IsChecked="True" Content="{Binding FastStart}"
-                                      Grid.Row="0" Grid.Column="1" ToolTip.Tip="{Binding FastStartTooltip}"/>
+                        <ToggleSwitch Name="MetadataTitleControl" IsChecked="True" Content="{CompiledBinding MetadataTitle}"
+                                      Grid.Row="0" Grid.Column="0" ToolTip.Tip="{CompiledBinding MetadataTitleTooltip}"/>
+                        <ToggleSwitch Name="FastStartControl" IsChecked="True" Content="{CompiledBinding FastStart}"
+                                      Grid.Row="0" Grid.Column="1" ToolTip.Tip="{CompiledBinding FastStartTooltip}"/>
                     
-                        <ToggleSwitch Name="AACControl" IsChecked="True" Content="{Binding AAC}"
-                                      Grid.Row="1" Grid.Column="0" ToolTip.Tip="{Binding AACTooltip}"/>
-                        <ToggleSwitch Name="ColorspaceControl" IsChecked="True" Content="{Binding Colorspace}"
-                                      Grid.Row="1" Grid.Column="1" ToolTip.Tip="{Binding ColorspaceTooltip}"/>
+                        <ToggleSwitch Name="AACControl" IsChecked="True" Content="{CompiledBinding AAC}"
+                                      Grid.Row="1" Grid.Column="0" ToolTip.Tip="{CompiledBinding AACTooltip}"/>
+                        <ToggleSwitch Name="ColorspaceControl" IsChecked="True" Content="{CompiledBinding Colorspace}"
+                                      Grid.Row="1" Grid.Column="1" ToolTip.Tip="{CompiledBinding ColorspaceTooltip}"/>
                     
-                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{Binding Subs}" PropertyChanged="ApplySubsControl_OnPropertyChanged"
-                                      Grid.Row="2" Grid.Column="0" ToolTip.Tip="{Binding ApplySubsTooltip}"/>
-                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{Binding Resize}" PropertyChanged="ApplyResizeControl_OnPropertyChanged"
-                                      Grid.Row="2" Grid.Column="1" ToolTip.Tip="{Binding ApplyResizeTooltip}"/>
+                        <ToggleSwitch Name="ApplySubsControl" IsChecked="True" Content="{CompiledBinding Subs}" PropertyChanged="ApplySubsControl_OnPropertyChanged"
+                                      Grid.Row="2" Grid.Column="0" ToolTip.Tip="{CompiledBinding ApplySubsTooltip}"/>
+                        <ToggleSwitch Name="ApplyResizeControl" IsChecked="False" Content="{CompiledBinding Resize}" PropertyChanged="ApplyResizeControl_OnPropertyChanged"
+                                      Grid.Row="2" Grid.Column="1" ToolTip.Tip="{CompiledBinding ApplyResizeTooltip}"/>
                     
-                        <ToggleSwitch Name="PGSSubsControl" IsChecked="False" Content="{Binding PGSSubs}" PropertyChanged="PGSSubsControl_OnPropertyChanged"
-                                      Grid.Row="3" Grid.Column="0" ToolTip.Tip="{Binding PGSSubsTooltip}"/>
-                        <ToggleSwitch Name="ExitAfterwardsControl" Content="{Binding ExitAfterwards}"
-                                      Grid.Row="3" Grid.Column="1" ToolTip.Tip="{Binding ExitAfterwardsTooltip}"/>
+                        <ToggleSwitch Name="PGSSubsControl" IsChecked="False" Content="{CompiledBinding PGSSubs}" PropertyChanged="PGSSubsControl_OnPropertyChanged"
+                                      Grid.Row="3" Grid.Column="0" ToolTip.Tip="{CompiledBinding PGSSubsTooltip}"/>
+                        <ToggleSwitch Name="ExitAfterwardsControl" Content="{CompiledBinding ExitAfterwards}"
+                                      Grid.Row="3" Grid.Column="1" ToolTip.Tip="{CompiledBinding ExitAfterwardsTooltip}"/>
 
-                        <ToggleSwitch Name="HardwareAccelerationControl" IsEnabled = "False" Content="{Binding HardwareAcceleration}"
-                                      Grid.Row="4" Grid.Column="0" ToolTip.Tip="{Binding HardwareAccelerationTooltip}"/>
-                        <ToggleSwitch Name="ExternalSubsControl" IsEnabled = "False" Content="{Binding ExternalSubs}" PropertyChanged="ExternalSubsControl_OnPropertyChanged"
-                                      Grid.Row="4" Grid.Column="1" ToolTip.Tip="{Binding ExternalSubsTooltip}"/>
+                        <ToggleSwitch Name="HardwareAccelerationControl" Content="{CompiledBinding HardwareAcceleration}"
+                                      Grid.Row="4" Grid.Column="0" ToolTip.Tip="{CompiledBinding HardwareAccelerationTooltip}"/>
+                        <ToggleSwitch Name="ExternalSubsControl" Content="{CompiledBinding ExternalSubs}" PropertyChanged="ExternalSubsControl_OnPropertyChanged"
+                                      Grid.Row="4" Grid.Column="1" ToolTip.Tip="{CompiledBinding ExternalSubsTooltip}"/>
                     </Grid>
                 </Border>
             </Panel>
