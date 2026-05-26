@@ -1,6 +1,7 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 
 namespace HardSubberGUI.Views
 {
@@ -9,6 +10,7 @@ namespace HardSubberGUI.Views
 		public UpdateFoundWindow()
 		{
 			InitializeComponent();
+			TextOptions.SetTextRenderingMode(this, TextRenderingMode.Antialias);
 		}
 
 		private void Yes_OnClick(object? sender, RoutedEventArgs? e)

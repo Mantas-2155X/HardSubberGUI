@@ -215,11 +215,14 @@ namespace HardSubberGUI
 		{
 			var info = new FileInfo(file);
 			
-			var shortName = info.Name[..^info.Extension.Length];
-			
 			var newName = info.FullName.Replace("'", "");
 			if (newName != info.FullName)
+			{
+				Console.WriteLine($"Renaming {info.FullName} to {newName}");
 				info.MoveTo(newName);
+			}
+				
+			var shortName = info.Name[..^info.Extension.Length];
 				
 			var process = new Process
 			{

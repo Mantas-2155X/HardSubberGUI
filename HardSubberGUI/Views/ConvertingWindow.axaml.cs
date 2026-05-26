@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using HardSubberGUI.Structs;
 
@@ -16,6 +17,7 @@ namespace HardSubberGUI.Views
 		public ConvertingWindow()
 		{
 			InitializeComponent();
+			TextOptions.SetTextRenderingMode(this, TextRenderingMode.Antialias);
 
 			Closed += delegate
 			{

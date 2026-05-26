@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using HardSubberGUI.Enums;
 using HardSubberGUI.ViewModels;
@@ -21,6 +22,7 @@ namespace HardSubberGUI.Views
 			Instance = this;
 			
 			InitializeComponent();
+			TextOptions.SetTextRenderingMode(this, TextRenderingMode.Antialias);
 
 			Opened += delegate
 			{
