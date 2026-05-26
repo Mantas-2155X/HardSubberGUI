@@ -4,8 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ApplicationIcon>Assets/hardsubber.ico</ApplicationIcon>
         <Nullable>enable</Nullable>
-        <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
-        <TrimMode>copyused</TrimMode>
+        <TrimMode>link</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <PackageVersion>1.0.1</PackageVersion>
         <AssemblyVersion>1.6.3.0</AssemblyVersion>
@@ -16,17 +15,8 @@
         <None Remove=".gitignore" />
     </ItemGroup>
     <ItemGroup>
-        <!--This helps with theme dll-s trimming.
-        If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
-        https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
-        <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
-        <TrimmableAssembly Include="Avalonia.Themes.Default" />
-    </ItemGroup>
-    <ItemGroup>
         <PackageReference Include="Avalonia" Version="12.0.3" />
         <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview2" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
         <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.1" />
@@ -37,4 +27,7 @@
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
+    <Target Name="RemoveSkiaPdbsAfterPublish" AfterTargets="Publish">
+        <Delete Files="$(PublishDir)libSkiaSharp.pdb;$(PublishDir)libHarfBuzzSharp.pdb;$(PublishDir)HardSubberGUI.pdb" />
+    </Target>
 </Project>
