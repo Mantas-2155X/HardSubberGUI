@@ -43,7 +43,7 @@ jobs:
       run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true HardSubberGUI.sln
       
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: windows-x64
         path: HardSubberGUI/bin/Release/net6.0/win-x64/publish/
