@@ -18,7 +18,7 @@ namespace HardSubberGUI.ViewModels
 		public static string PickFileTooltip => "Pick video file to convert";
 		public static string PickDirectoryInputTooltip => "Pick directory containing videos to convert";
 		public static string PickDirectoryOutputTooltip => "Pick directory where converted videos will be placed\nIf not specified: /output";
-		public static string ExtensionTooltip => "Output video extension\nFor cytu.be use .mp4 or .m4v";
+		public static string ExtensionTooltip => "Output video extension\nFor cytu.be use .mp4 or .m4v. Everything is only tested against .mp4 output";
 		
 		public static string SubtitleIndexTooltip => "Subtitle index to apply\nNote: The index starts from zero, not one";
 		public static string AudioIndexTooltip => "Audio index to apply\nNote: The index starts from zero, not one";
@@ -27,12 +27,12 @@ namespace HardSubberGUI.ViewModels
 		public static string ThreadsTooltip => "Limit CPU threads used for conversion";
 		
 		public static string ColorspaceTooltip => "Reset the videos colorspace\nCan fix not loading in cytu.be";
-		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion\nOutput to .mkv is not supported";
+		public static string HardwareAccelerationTooltip => "Use GPU to accelerate conversion";
 		public static string SimultaneousTooltip => "Convert x videos at once\nOnly available if converting a directory";
 		public static string ExitAfterwardsTooltip => "Close HardSubberGUI after conversion is finished";
 		public static string MetadataTitleTooltip => "Set the videos metadata title to filename\nFixes 'Raw Video' title in cytu.be";
 		public static string FastStartTooltip => "Optimize for web playback\nCan fix not loading in cytu.be";
-		public static string PGSSubsTooltip => "Hardsub PGS type subtitles\nHardware acceleration and resizing are not supported";
+		public static string PGSSubsTooltip => "Hardsub PGS type subtitles";
 		public static string ApplySubsTooltip => "Apply subtitles";
 		public static string ApplyResizeTooltip => "Resize the video\nHardware Acceleration is not used for this";
 		public static string AACTooltip => "Convert audio codec to AAC\nCan fix not loading in cytu.be";

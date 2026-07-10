@@ -29,13 +29,28 @@ namespace HardSubberGUI
 		{
 			return $".{format.ToString()}";
 		}
+		
+		public static string GetSupportedFormatString(ESupportedOutputFormat format)
+		{
+			return $".{format.ToString()}";
+		}
 
-		public static List<string> GetSupportedFormatStrings()
+		public static List<string> GetSupportedInputFormatStrings()
 		{
 			var list = new List<string>();
 			
 			for (var i = 0; i < Enum.GetValues(typeof(ESupportedFormat)).Length; i++)
 				list.Add(GetSupportedFormatString((ESupportedFormat)i));
+			
+			return list;
+		}
+		
+		public static List<string> GetSupportedOutputFormatStrings()
+		{
+			var list = new List<string>();
+			
+			for (var i = 0; i < Enum.GetValues(typeof(ESupportedOutputFormat)).Length; i++)
+				list.Add(GetSupportedFormatString((ESupportedOutputFormat)i));
 			
 			return list;
 		}
@@ -335,9 +350,25 @@ namespace HardSubberGUI
 				if (conversionOptions.BurnSubsAndAudio)
 				{
 					if (conversionOptions.UsePGS)
-						process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{conversionOptions.SubtitleIndex}]overlay[v] -map [v] ";
+					{
+						if (conversionOptions.Resize)
+						{
+							// Slightly different method to scale for pgs
+							process.StartInfo.Arguments += $"-filter_complex '[0:v]scale={conversionOptions.ResizeResolution[0]}:{conversionOptions.ResizeResolution[1]}[v1];[v1][0:s:{conversionOptions.SubtitleIndex}]overlay[v]' -map [v] ";
+						}
+						else
+							process.StartInfo.Arguments += $"-filter_complex [0:v][0:s:{conversionOptions.SubtitleIndex}]overlay[v] -map [v] ";
+					}
 					else
+					{
 						process.StartInfo.Arguments += $"-filter_complex {scaleString}{subsFilter}={escaped}:stream_index={conversionOptions.SubtitleIndex} ";
+					}
+				}
+				else
+				{
+					// Slightly different method to scale since other filters arent used
+					if (conversionOptions.Resize)
+						process.StartInfo.Arguments += $"-vf scale={conversionOptions.ResizeResolution[0]}:{conversionOptions.ResizeResolution[1]} ";
 				}
 
 				process.StartInfo.Arguments += "-c:v libx264 ";

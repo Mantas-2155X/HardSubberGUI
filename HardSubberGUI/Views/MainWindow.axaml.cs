@@ -26,7 +26,7 @@ namespace HardSubberGUI.Views
 
 			Opened += delegate
 			{
-				ExtensionControl.ItemsSource = Tools.GetSupportedFormatStrings();
+				ExtensionControl.ItemsSource = Tools.GetSupportedOutputFormatStrings();
 				ExtensionControl.SelectedIndex = 0;
 				
 				initialized = true;
@@ -134,11 +134,6 @@ namespace HardSubberGUI.Views
 			
 			if (!HardwareAccelerationControl.IsEnabled)
 				HardwareAccelerationControl.IsChecked = false;
-
-			ApplyResizeControl.IsEnabled = !(bool)PGSSubsControl.IsChecked!;
-			
-			if (!ApplyResizeControl.IsEnabled)
-				ApplyResizeControl.IsChecked = false;
 
 			if ((bool)PGSSubsControl.IsChecked)
 				ExternalSubsControl.IsEnabled = false;

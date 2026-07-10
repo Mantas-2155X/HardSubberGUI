@@ -37,7 +37,7 @@ namespace HardSubberGUI
 			if (string.IsNullOrEmpty(input))
 				return null;
 
-			var formats = Tools.GetSupportedFormatStrings();
+			var formats = Tools.GetSupportedInputFormatStrings();
 			var inputInfo = new FileInfo(input);
 			
 			var files = new List<string>();

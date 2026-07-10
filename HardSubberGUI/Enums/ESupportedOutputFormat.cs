@@ -1,8 +1,8 @@
 namespace HardSubberGUI.Enums
 {
-	public enum ESupportedFormat
+	public enum ESupportedOutputFormat
 	{
-		mp4,
+		mp4, // best supported
 		m4v,
 		mkv,
 		avi,
