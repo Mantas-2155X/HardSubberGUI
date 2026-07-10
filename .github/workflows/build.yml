@@ -12,6 +12,12 @@ jobs:
     steps:
     - name: Checkout Solution
       uses: actions/checkout@v4
+
+    - name: Update CA Certificates
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ca-certificates
+        sudo update-ca-certificates --fresh
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
