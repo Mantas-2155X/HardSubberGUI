@@ -15,11 +15,11 @@
         <None Remove=".gitignore" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.3" />
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.3" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
+        <PackageReference Include="Avalonia" Version="12.0.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.5" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.5" />
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-        <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.1" />
+        <PackageReference Include="ReactiveUI.Avalonia" Version="12.0.3" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Views\App.axaml.cs">
