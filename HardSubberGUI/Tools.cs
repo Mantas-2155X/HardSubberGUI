@@ -273,6 +273,9 @@ namespace HardSubberGUI
 			}
 			
 			process.StartInfo.Arguments += $"-i '{info.FullName}' ";
+
+			// Fix audio/video offset (pt1)
+			process.StartInfo.Arguments += "-fflags +genpts+igndts ";
 			
 			var subsFilter = "";
 			var streamIndex = "";
@@ -395,6 +398,9 @@ namespace HardSubberGUI
 			
 			if (threads > 0)
 				process.StartInfo.Arguments += $"-threads {threads} ";
+			
+			// Fix audio/video offset (pt2)
+			process.StartInfo.Arguments += "-async 1 -vsync 1 ";
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{conversionOptions.OutputPath}/{shortName}{GetSupportedFormatString(conversionOptions.Format)}'";
