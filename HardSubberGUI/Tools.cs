@@ -264,9 +264,14 @@ namespace HardSubberGUI
 					case EGPU.NVIDIA:
 					{
 						if (OSTools.IsWindows)
-							process.StartInfo.Arguments += "-vsync 0 ";
+						{
+							// Can't use this anymore leading to slightly slower performance because vsync 1 is enforced
+							//process.StartInfo.Arguments += "-vsync 0 ";
+						}
 						else
+						{
 							throw new Exception("ERR_HWACCEL_NOTSUPPORTED");
+						}
 						break;
 					}
 				}
@@ -400,7 +405,7 @@ namespace HardSubberGUI
 				process.StartInfo.Arguments += $"-threads {threads} ";
 			
 			// Fix audio/video offset (pt2)
-			process.StartInfo.Arguments += "-async 1 -vsync 1 ";
+			process.StartInfo.Arguments += "-async 1 -fps_mode cfr ";
 			
 			process.StartInfo.Arguments += "-strict -2 ";
 			process.StartInfo.Arguments += $"'{conversionOptions.OutputPath}/{shortName}{GetSupportedFormatString(conversionOptions.Format)}'";

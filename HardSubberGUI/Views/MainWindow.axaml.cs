@@ -21,6 +21,8 @@ namespace HardSubberGUI.Views
 		{
 			Instance = this;
 			
+			Console.WriteLine($"HardSubberGUI {MainWindowViewModel.Version}");
+			
 			InitializeComponent();
 			TextOptions.SetTextRenderingMode(this, TextRenderingMode.Antialias);
 
